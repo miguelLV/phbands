@@ -27,6 +27,12 @@ def parser() -> argparse.ArgumentParser:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     result.add_argument("--polarization", choices=("inplane", "antiplane"), default="inplane")
+    result.add_argument(
+        "--inclusion-type",
+        choices=("solid", "cavity"),
+        default="solid",
+        help="Tipo de obstaculo; cavity esta disponible para antiplane",
+    )
     result.add_argument("--name", default="custom", help="Nombre del sistema mostrado en figuras y manifiesto")
     result.add_argument("--host-rho", type=float, default=1.85, help="Densidad del anfitrion")
     result.add_argument("--host-cl", type=float, default=13.11, help="Velocidad longitudinal del anfitrion")
@@ -84,9 +90,13 @@ def main():
         raise ValueError("omega-max, k-per-segment, n-scan y m-max deben ser validos y positivos")
     filling, radius = configure_geometry(args)
     host_mu = validate_medium("anfitrion", args.host_rho, args.host_cl, args.host_ct)
-    inclusion_mu = validate_medium(
-        "cilindro", args.inclusion_rho, args.inclusion_cl, args.inclusion_ct
-    )
+    inclusion_mu = None
+    if args.inclusion_type == "solid":
+        inclusion_mu = validate_medium(
+            "cilindro", args.inclusion_rho, args.inclusion_cl, args.inclusion_ct
+        )
+    elif args.polarization != "antiplane":
+        raise ValueError("inclusion-type cavity solo esta implementado para polarization antiplane")
     output = (args.output or REPOSITORY / "runs" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.name}").resolve()
     output.mkdir(parents=True, exist_ok=True)
 
@@ -109,17 +119,22 @@ def main():
 
         configure_common(engine, args, output, filling, radius)
         engine.HOST = HostMedium(host_mu, args.host_rho)
-        engine.INCLUSION = HostMedium(inclusion_mu, args.inclusion_rho)
+        if args.inclusion_type == "solid":
+            engine.INCLUSION = HostMedium(inclusion_mu, args.inclusion_rho)
+        engine.SCATTERER_KIND = args.inclusion_type
         engine.OMEGA_SCALE = 2 * np.pi * engine.HOST.c_t
         engine.H_POLE_CHECK = args.h_pole
         engine.ADAPTIVE_MULTIPLICITY = True
 
     print(f"Salida: {output}")
     print(f"Host: rho={args.host_rho:.8g}, cl={args.host_cl:.8g}, ct={args.host_ct:.8g}")
-    print(
-        f"Inclusion: rho={args.inclusion_rho:.8g}, "
-        f"cl={args.inclusion_cl:.8g}, ct={args.inclusion_ct:.8g}"
-    )
+    if args.inclusion_type == "solid":
+        print(
+            f"Inclusion: rho={args.inclusion_rho:.8g}, "
+            f"cl={args.inclusion_cl:.8g}, ct={args.inclusion_ct:.8g}"
+        )
+    else:
+        print("Inclusion: cavidad con traccion nula")
     print(f"Geometria: filling={filling:.8g}, r/a={radius:.8g}")
     engine.main()
 

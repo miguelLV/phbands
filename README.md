@@ -49,6 +49,22 @@ python examples\run_custom_bands.py `
   --filling-fraction 0.12
 ```
 
+Ejemplo de cavidad antiplana exacta (traccion nula):
+
+```powershell
+python examples\run_custom_bands.py `
+  --polarization antiplane `
+  --inclusion-type cavity `
+  --name cavidad-en-caucho `
+  --host-rho 0.920 --host-cl 0.04 --host-ct 0.03 `
+  --filling-fraction 0.10 `
+  --omega-max 1.3 `
+  --n-scan 520
+```
+
+Para una cavidad no se usan `inclusion-rho`, `inclusion-cl` ni
+`inclusion-ct`. La cavidad in-plane aun no esta implementada.
+
 Las unidades deben ser consistentes. Los valores predeterminados usan densidad
 en `g/cm^3` y velocidades en `km/s`, como en el articulo de MEI. El solver
 calcula internamente `mu = rho*ct^2` y, para el problema in-plane,

@@ -24,7 +24,7 @@ from phbands.media import HostMedium
 from phbands.rootfinding import RootFindingConfig
 from phbands.rootfinding.gap_detection import detect_bridge_gaps, detect_continuity_mismatches
 from phbands.rootfinding.validation import equilibrate_matrix, refine_matrix_candidate
-from phbands.scatterer import SolidCylinderScatterer
+from phbands.scatterer import CavityScatterer, SolidCylinderScatterer
 from phbands.secular import SecularProblem
 
 
@@ -33,6 +33,7 @@ CYCLE_NUMBER = 6
 OUTPUT_TAG = "cycle_6"
 SYSTEM_LABEL = "Au/Be"
 HOST_LABEL = "Be"
+SCATTERER_KIND = "solid"
 A = 1.0
 FILLING_FRACTION = 0.0908
 RADIUS = float(np.sqrt(FILLING_FRACTION / np.pi))
@@ -341,7 +342,11 @@ def plot_bands(path, bands, recovered, output, diagnostic=False):
 def main():
     total_started = time.perf_counter()
     path = build_path([("M", 1, 1), ("Gamma", 0, 0), ("X", 1, 0), ("M", 1, 1)], A, N_PER_SEGMENT)
-    scatterer = SolidCylinderScatterer(RADIUS, HOST, INCLUSION)
+    scatterer = (
+        CavityScatterer(RADIUS, HOST)
+        if SCATTERER_KIND == "cavity"
+        else SolidCylinderScatterer(RADIUS, HOST, INCLUSION)
+    )
     primary = SecularProblem(SquareLattice(A), scatterer, M_MAX, LatticeSumConfig(H_PRIMARY))
     check = SecularProblem(SquareLattice(A), scatterer, M_MAX, LatticeSumConfig(H_CHECK))
     pole_check = SecularProblem(SquareLattice(A), scatterer, M_MAX, LatticeSumConfig(H_POLE_CHECK))
@@ -382,10 +387,14 @@ def main():
 
     manifest = {
         "cycle": CYCLE_NUMBER,
-        "purpose": "Corrida Au/Be antiplana desde cero con T_n de cilindro solido y rescate SVD automatico",
+        "purpose": (
+            "Corrida antiplana desde cero con T_n de cavidad y rescate SVD automatico"
+            if SCATTERER_KIND == "cavity"
+            else "Corrida Au/Be antiplana desde cero con T_n de cilindro solido y rescate SVD automatico"
+        ),
         "input_band_data_reused": False,
         "interpolation_used_to_create_roots": False,
-        "physics": {"system": SYSTEM_LABEL, "polarization": "antiplane_z", "filling_fraction": FILLING_FRACTION, "radius_over_a": RADIUS, "host": {"rho": HOST.rho, "mu": HOST.mu, "c_t": HOST.c_t}, "inclusion": {"rho": INCLUSION.rho, "mu": INCLUSION.mu, "c_t": INCLUSION.c_t}, "normalization": "omega*a/(2*pi*c_t_host)"},
+        "physics": {"system": SYSTEM_LABEL, "polarization": "antiplane_z", "scatterer_kind": SCATTERER_KIND, "filling_fraction": FILLING_FRACTION, "radius_over_a": RADIUS, "host": {"rho": HOST.rho, "mu": HOST.mu, "c_t": HOST.c_t}, "inclusion": {"type": "cavity"} if SCATTERER_KIND == "cavity" else {"type": "solid", "rho": INCLUSION.rho, "mu": INCLUSION.mu, "c_t": INCLUSION.c_t}, "normalization": "omega*a/(2*pi*c_t_host)"},
         "numerics": {"n_scan": N_SCAN, "n_per_segment": N_PER_SEGMENT, "m_max": M_MAX, "h_primary": H_PRIMARY, "h_check": H_CHECK, "pole_check_h": H_POLE_CHECK, "local_grid_size": LOCAL_GRID_SIZE, "continuity_recovery": True, "adaptive_multiplicity": ADAPTIVE_MULTIPLICITY, "multiplicity_local_grid_size": MULTIPLICITY_LOCAL_GRID_SIZE if ADAPTIVE_MULTIPLICITY else None, "multiplicity_ultrafine_grid_size": MULTIPLICITY_ULTRAFINE_GRID_SIZE if ADAPTIVE_MULTIPLICITY else None, "multiplicity_ultrafine_half_width": MULTIPLICITY_ULTRAFINE_HALF_WIDTH if ADAPTIVE_MULTIPLICITY else None, "multiplicity_match_existing_bar": MULTIPLICITY_MATCH_EXISTING_BAR if ADAPTIVE_MULTIPLICITY else None, "multiplicity_resolved_streak": MULTIPLICITY_RESOLVED_STREAK if ADAPTIVE_MULTIPLICITY else None},
         "result": {"raw_scan_candidates": sum(map(len, raw)), "initial_accepted": sum(map(len, accepted)), "initial_rejected": len(rejected), "activation_windows": len(windows), "activated_k_indices": len({window["k_index"] for window in windows}), "local_candidates": len(candidates), "recovered_roots": len(recovered), "final_roots": len(rows), "multiplicity_events": multiplicities, "recovered": recovered},
         "timing_s": {"global_scan": scan_elapsed, "classification_and_activation": activation_elapsed, "local_svd_and_validation": recovery_elapsed, "total": time.perf_counter() - total_started},
