@@ -138,10 +138,11 @@ def build_path(labeled_points: Sequence[tuple[str, float, float]],
         p0, p1 = pts_k[i], pts_k[i + 1]
         seg_k = np.linspace(p0, p1, n_per_segment, endpoint=(i == len(pts_k) - 2))
         seg_len = np.linalg.norm(p1 - p0)
-        if seg_k.shape[0] > 1:
-            seg_dist = cum_dist + np.linspace(0.0, seg_len, seg_k.shape[0])
-        else:
-            seg_dist = np.array([cum_dist])
+        # La distancia debe corresponder al punto k realmente muestreado. En
+        # segmentos con endpoint=False el ultimo punto no alcanza p1; repartir
+        # igualmente [0, seg_len] producia una abscisa duplicada con el nodo
+        # inicial del segmento siguiente.
+        seg_dist = cum_dist + np.linalg.norm(seg_k - p0, axis=1)
         tick_positions.append(cum_dist)
         all_k.append(seg_k)
         all_dist.append(seg_dist)

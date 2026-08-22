@@ -1,0 +1,73 @@
+{
+  "cycle": 6,
+  "purpose": "Corrida Au/Be antiplana desde cero con T_n de cilindro solido y rescate SVD automatico",
+  "input_band_data_reused": false,
+  "interpolation_used_to_create_roots": false,
+  "physics": {
+    "system": "Au/Be",
+    "polarization": "antiplane_z",
+    "filling_fraction": 0.0908,
+    "radius_over_a": 0.17000746355818674,
+    "host": {
+      "rho": 1.85,
+      "mu": 153.3388237847222,
+      "c_t": 9.104166666666666
+    },
+    "inclusion": {
+      "rho": 19.5,
+      "mu": 29.976062417450734,
+      "c_t": 1.239852398523985
+    },
+    "normalization": "omega*a/(2*pi*c_t_host)"
+  },
+  "numerics": {
+    "n_scan": 200,
+    "n_per_segment": 40,
+    "m_max": 2,
+    "h_primary": 8,
+    "h_check": 12,
+    "pole_check_h": 16,
+    "local_grid_size": 101,
+    "continuity_recovery": true
+  },
+  "result": {
+    "raw_scan_candidates": 393,
+    "initial_accepted": 393,
+    "initial_rejected": 0,
+    "activation_windows": 3,
+    "activated_k_indices": 3,
+    "local_candidates": 4,
+    "recovered_roots": 0,
+    "final_roots": 393,
+    "multiplicity_events": [],
+    "recovered": []
+  },
+  "timing_s": {
+    "global_scan": 59.49804320000112,
+    "classification_and_activation": 0.04823660000693053,
+    "local_svd_and_validation": 1.9404633000085596,
+    "total": 62.736929799983045
+  },
+  "environment": {
+    "python": "3.12.13",
+    "numpy": "2.5.2",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.1"
+  },
+  "outputs": {
+    "bands_csv": "bands_cycle_6.csv",
+    "candidate_diagnostics": "local_candidate_diagnostics_cycle_6.csv",
+    "activation_windows": "activation_windows_cycle_6.json",
+    "rejected_initial": "rejected_initial_candidates_cycle_6.json",
+    "final_image": "bands_cycle_6.png",
+    "diagnostic_image": "bands_cycle_6_sources.png"
+  },
+  "output_sha256": {
+    "bands_cycle_6.csv": "030857d883939c97382d60278ad139d713ca1cec011a0c6ce0707a9f012dde2c",
+    "local_candidate_diagnostics_cycle_6.csv": "2056c5744e1441a259f2ee22087697255c2969f82deb42333299880faabaebfd",
+    "activation_windows_cycle_6.json": "15965dd45c20a16ae45bdef77ad491372ce9c3b2681093aee48dc13c6e857e72",
+    "rejected_initial_candidates_cycle_6.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "bands_cycle_6.png": "382e3c7ee3dfdc430bdf9f9ceb5ef0da611109db9396d73b82f1d56238de94e8",
+    "bands_cycle_6_sources.png": "7caec77265a731023421fc541e33a870be602df20b37db76578677410bd2b0a3"
+  }
+}

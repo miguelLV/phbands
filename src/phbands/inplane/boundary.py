@@ -63,10 +63,16 @@ def _W(C, k: complex, R: float, m: int, mu: float) -> complex:
 
 
 def _block_12(C, k_l: complex, k_t: complex, R: float, m: int) -> np.ndarray:
-    """Bloque 2x2 de continuidad de desplazamiento (filas 1,2 del Anexo B)."""
+    """Bloque 2x2 de continuidad de desplazamiento (Mei, Ap. B, B.1a-B.1l).
+
+    Para la base transversal ``curl(z_hat C_m(k_t r)e^{im theta})``, las
+    componentes son ``(u_r, u_theta) = (Q_t, -P_t)``.  El signo menos de la
+    entrada (2,2) es parte de la definicion de la base, no una convencion
+    global que pueda absorberse cambiando el signo de toda la columna.
+    """
     return np.array([
         [_P(C, k_l, R, m), _Q(C, k_t, R, m)],
-        [_Q(C, k_l, R, m), _P(C, k_t, R, m)],
+        [_Q(C, k_l, R, m), -_P(C, k_t, R, m)],
     ], dtype=complex)
 
 

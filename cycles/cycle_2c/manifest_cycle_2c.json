@@ -1,0 +1,95 @@
+{
+  "cycle": "2C",
+  "purpose": "Calibrar activacion automatica de SVD local sin crear ni eliminar raices",
+  "roots_modified": false,
+  "known_gaps": {
+    "1": 0.35956238320875616,
+    "2": 0.3573836773237277,
+    "3": 0.3539888021821088,
+    "31": 0.9005302845623716,
+    "71": 0.42918755706918454,
+    "72": 0.4354148285704355,
+    "73": 0.43417024055117204,
+    "104": 0.856568507875814
+  },
+  "known_detected": [
+    1,
+    2,
+    3,
+    31,
+    71,
+    72,
+    73,
+    104
+  ],
+  "known_missed": [],
+  "known_recall": 1.0,
+  "bridge_trigger_count_before_merge": 81,
+  "activation_window_count": 27,
+  "activated_k_indices": [
+    1,
+    2,
+    3,
+    17,
+    29,
+    31,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    56,
+    57,
+    71,
+    72,
+    73,
+    96,
+    97,
+    99,
+    104,
+    109,
+    116,
+    117,
+    118
+  ],
+  "activated_fraction": 0.21666666666666667,
+  "multiplicity_events": [
+    {
+      "k_index": 0,
+      "omega_bar": 0.3603175232971049,
+      "second_singular_ratio": 6.031835296227755e-06
+    },
+    {
+      "k_index": 40,
+      "omega_bar": 0.8738696207694856,
+      "second_singular_ratio": 6.867330315468687e-06
+    },
+    {
+      "k_index": 119,
+      "omega_bar": 0.3603175232971049,
+      "second_singular_ratio": 6.031835296227755e-06
+    }
+  ],
+  "projection": {
+    "local_samples_per_window": 101,
+    "matrix_evaluations": 2727,
+    "additional_seconds": 14.415196629213483
+  },
+  "elapsed_s": 0.08317860000533983,
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "matplotlib": "3.11.1"
+  },
+  "outputs": {
+    "windows": "activation_windows_cycle_2c.json",
+    "image": "activation_map_cycle_2c.png"
+  },
+  "output_sha256": {
+    "activation_windows_cycle_2c.json": "ac67bd236519373be5a3ecd251117bb8678b4e2256b970f51fc8bcdca498f3f2",
+    "activation_map_cycle_2c.png": "8ac1e56d20d07f6d1545b4b9c0992081225aa83d38d8a1174d39725bdd79b2f2"
+  }
+}

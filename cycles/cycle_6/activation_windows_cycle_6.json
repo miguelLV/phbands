@@ -1,0 +1,27 @@
+[
+  {
+    "k_index": 39,
+    "lower_bar": 0.0025021314297933098,
+    "upper_bar": 0.04871991603640401,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 40,
+    "lower_bar": 1e-06,
+    "upper_bar": 0.04489729625548086,
+    "reasons": [
+      "continuity_mismatch",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 1e-06,
+    "upper_bar": 0.0451911877308727,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  }
+]

@@ -1,5 +1,23 @@
 from .beyn import BeynConfig
 from .beyn import find_roots as find_roots_beyn
 from .scan_bracket import RootFindingConfig, find_roots
+from .validation import (
+    MatrixCandidateValidation,
+    balanced_sigma_min,
+    equilibrate_matrix,
+    refine_matrix_candidate,
+)
+from .gap_detection import GapTrigger, detect_bridge_gaps
 
-__all__ = ["RootFindingConfig", "find_roots", "BeynConfig", "find_roots_beyn"]
+__all__ = [
+    "RootFindingConfig",
+    "find_roots",
+    "BeynConfig",
+    "find_roots_beyn",
+    "MatrixCandidateValidation",
+    "balanced_sigma_min",
+    "equilibrate_matrix",
+    "refine_matrix_candidate",
+    "GapTrigger",
+    "detect_bridge_gaps",
+]

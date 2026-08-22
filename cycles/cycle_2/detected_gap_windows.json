@@ -1,0 +1,26 @@
+[
+  {
+    "k_index": 31,
+    "left_frequency": 0.9059577719191526,
+    "right_frequency": 0.8953824033660704,
+    "search_lower_bar": 0.8703824033660704,
+    "search_upper_bar": 0.9309577719191526,
+    "evidence_count": 1
+  },
+  {
+    "k_index": 40,
+    "left_frequency": 0.011651969548127715,
+    "right_frequency": 0.007760529501421095,
+    "search_lower_bar": 0.0,
+    "search_upper_bar": 0.04926655351855255,
+    "evidence_count": 2
+  },
+  {
+    "k_index": 104,
+    "left_frequency": 0.8596565963664298,
+    "right_frequency": 0.8536611480199164,
+    "search_lower_bar": 0.8286611480199164,
+    "search_upper_bar": 0.8846565963664298,
+    "evidence_count": 1
+  }
+]

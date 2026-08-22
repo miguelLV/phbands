@@ -1,0 +1,10 @@
+[
+  {
+    "k_index": 91,
+    "omega_bar": 4.984452018392653e-06,
+    "reason": "low_frequency_away_from_gamma",
+    "bessel_channel": "t",
+    "bessel_order": 1,
+    "bessel_zero": 3.8317059702075125
+  }
+]

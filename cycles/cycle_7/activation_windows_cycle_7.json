@@ -1,0 +1,299 @@
+[
+  {
+    "k_index": 1,
+    "lower_bar": 0.3868929913321609,
+    "upper_bar": 0.3988929913321609,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.3868929913321609,
+    "upper_bar": 0.3988929913321609,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 4,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 5,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 6,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 7,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 33,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 34,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 35,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 36,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 37,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 38,
+    "lower_bar": 0.4076856156071239,
+    "upper_bar": 0.4196856156071239,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 0.0025021314297933098,
+    "upper_bar": 0.04871991603640401,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 0.4076856156071239,
+    "upper_bar": 0.4196856156071239,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 40,
+    "lower_bar": 1e-06,
+    "upper_bar": 0.04489729625548086,
+    "reasons": [
+      "continuity_mismatch",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 1e-06,
+    "upper_bar": 0.0451911877308727,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 0.4076856156071239,
+    "upper_bar": 0.4196856156071239,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 42,
+    "lower_bar": 0.4076856156071239,
+    "upper_bar": 0.4196856156071239,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 43,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 44,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 45,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 46,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 47,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 48,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 49,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 50,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 51,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 52,
+    "lower_bar": 0.3836856156071239,
+    "upper_bar": 0.44368561560712394,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 111,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 112,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 113,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 114,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 115,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.3628929913321609,
+    "upper_bar": 0.42289299133216085,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.3868929913321609,
+    "upper_bar": 0.3988929913321609,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.3868929913321609,
+    "upper_bar": 0.3988929913321609,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  }
+]

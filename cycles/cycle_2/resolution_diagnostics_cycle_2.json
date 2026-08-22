@@ -1,0 +1,127 @@
+[
+  {
+    "k_index": 31,
+    "left_frequency": 0.9059577719191526,
+    "right_frequency": 0.8953824033660704,
+    "search_lower_bar": 0.8703824033660704,
+    "search_upper_bar": 0.9309577719191526,
+    "evidence_count": 1,
+    "K": [
+      0.7068583470577035,
+      0.7068583470577035
+    ],
+    "resolution_summary": {
+      "51": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8946125507873033,
+          0.9006700876426115
+        ]
+      },
+      "101": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8946125507873033,
+          0.9006700876426115
+        ]
+      },
+      "201": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8946125507873033,
+          0.9006700876426115
+        ]
+      },
+      "401": {
+        "det_minima_bar": [
+          0.9005186492212288
+        ],
+        "svd_minima_bar": [
+          0.8946125507873033,
+          0.9005186492212288
+        ]
+      }
+    },
+    "dense_seed_count": 2,
+    "refined_seed_count": 2,
+    "is_gamma_low_frequency_window": false
+  },
+  {
+    "k_index": 40,
+    "left_frequency": 0.011651969548127715,
+    "right_frequency": 0.007760529501421095,
+    "search_lower_bar": 0.0,
+    "search_upper_bar": 0.04926655351855255,
+    "evidence_count": 2,
+    "K": [
+      0.0,
+      0.0
+    ],
+    "resolution_summary": {
+      "51": {
+        "det_minima_bar": [],
+        "svd_minima_bar": []
+      },
+      "101": {
+        "det_minima_bar": [],
+        "svd_minima_bar": []
+      },
+      "201": {
+        "det_minima_bar": [],
+        "svd_minima_bar": []
+      },
+      "401": {
+        "det_minima_bar": [],
+        "svd_minima_bar": []
+      }
+    },
+    "dense_seed_count": 0,
+    "refined_seed_count": 0,
+    "is_gamma_low_frequency_window": true
+  },
+  {
+    "k_index": 104,
+    "left_frequency": 0.8596565963664298,
+    "right_frequency": 0.8536611480199164,
+    "search_lower_bar": 0.8286611480199164,
+    "search_upper_bar": 0.8846565963664298,
+    "evidence_count": 1,
+    "K": [
+      3.141592653589793,
+      1.9332877868244882
+    ],
+    "resolution_summary": {
+      "51": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8544190542593125,
+          0.8566588721931732
+        ]
+      },
+      "101": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8538590997758474,
+          0.8566588721931732
+        ]
+      },
+      "201": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8538590997758474,
+          0.8566588721931732
+        ]
+      },
+      "401": {
+        "det_minima_bar": [],
+        "svd_minima_bar": [
+          0.8539990883967137,
+          0.8565188835723068
+        ]
+      }
+    },
+    "dense_seed_count": 2,
+    "refined_seed_count": 2,
+    "is_gamma_low_frequency_window": false
+  }
+]

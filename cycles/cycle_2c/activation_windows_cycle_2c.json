@@ -1,0 +1,245 @@
+[
+  {
+    "k_index": 1,
+    "lower_bar": 0.3403175232971049,
+    "upper_bar": 0.38031752329710494,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.3403175232971049,
+    "upper_bar": 0.38031752329710494,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.3403175232971049,
+    "upper_bar": 0.38031752329710494,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 17,
+    "lower_bar": 0.8528772964517406,
+    "upper_bar": 0.9029319436406718,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 10
+  },
+  {
+    "k_index": 29,
+    "lower_bar": 0.967100529076282,
+    "upper_bar": 1.0,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 3
+  },
+  {
+    "k_index": 31,
+    "lower_bar": 0.8806700876426115,
+    "upper_bar": 0.9211172755787849,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 4
+  },
+  {
+    "k_index": 37,
+    "lower_bar": 0.8538696207694856,
+    "upper_bar": 0.8938696207694856,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 38,
+    "lower_bar": 0.8538696207694856,
+    "upper_bar": 0.8938696207694856,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 0.8538696207694856,
+    "upper_bar": 0.8938696207694856,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 40,
+    "lower_bar": 0.0,
+    "upper_bar": 0.06990311100343406,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 16
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 0.011257683559428442,
+    "upper_bar": 0.07062831873335242,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 6
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 0.8538696207694856,
+    "upper_bar": 0.8938696207694856,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 42,
+    "lower_bar": 0.8538696207694856,
+    "upper_bar": 0.8938696207694856,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 43,
+    "lower_bar": 0.8538696207694856,
+    "upper_bar": 0.8938696207694856,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 56,
+    "lower_bar": 0.9699292818631521,
+    "upper_bar": 1.0,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 3
+  },
+  {
+    "k_index": 57,
+    "lower_bar": 0.9575984277392448,
+    "upper_bar": 0.9995194443119798,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 3
+  },
+  {
+    "k_index": 71,
+    "lower_bar": 0.4016216784053315,
+    "upper_bar": 0.44471114114495025,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 3
+  },
+  {
+    "k_index": 72,
+    "lower_bar": 0.40508988503877535,
+    "upper_bar": 0.44714952686518783,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 3
+  },
+  {
+    "k_index": 73,
+    "lower_bar": 0.4069972766471063,
+    "upper_bar": 0.44958791258542546,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 3
+  },
+  {
+    "k_index": 96,
+    "lower_bar": 0.8724868613111565,
+    "upper_bar": 0.91797050870293,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 4
+  },
+  {
+    "k_index": 97,
+    "lower_bar": 0.851752276152846,
+    "upper_bar": 0.8960416490873269,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 4
+  },
+  {
+    "k_index": 99,
+    "lower_bar": 0.8859134438404624,
+    "upper_bar": 0.9295488255406358,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 5
+  },
+  {
+    "k_index": 104,
+    "lower_bar": 0.8366588721931731,
+    "upper_bar": 0.8771146650133226,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 10
+  },
+  {
+    "k_index": 109,
+    "lower_bar": 0.33495667430903975,
+    "upper_bar": 0.37530274765777166,
+    "reasons": [
+      "one_to_one_bridge"
+    ],
+    "evidence_count": 4
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.3403175232971049,
+    "upper_bar": 0.38031752329710494,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.3403175232971049,
+    "upper_bar": 0.38031752329710494,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.3403175232971049,
+    "upper_bar": 0.38031752329710494,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ],
+    "evidence_count": 1
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "cycle": 2,
+  "purpose": "Determinar por que se pierden puntos mediante barridos directos de resolucion creciente",
+  "interpolation_used_to_create_roots": false,
+  "grid_sizes": [
+    51,
+    101,
+    201,
+    401
+  ],
+  "reciprocal_pole_guard_bar": 0.0015,
+  "windows": 3,
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "matplotlib": "3.11.1"
+  },
+  "result": {
+    "elapsed_s": 6.723655699985102,
+    "refined_candidates": 4,
+    "new_converged_roots": 2,
+    "new_roots": [
+      {
+        "k_index": 31,
+        "Kx": 0.7068583470577035,
+        "Ky": 0.7068583470577035,
+        "omega_bar": 0.9005302845623716,
+        "sigma_balanced_h8": 3.6218945517449377e-10,
+        "sigma_balanced_h12": 1.6649169658870688e-09,
+        "shift_h8_h12_bar": 1.366168107306767e-06,
+        "nearest_reciprocal_pole_distance_bar": 0.005928417808227282,
+        "nearest_reciprocal_pole_channel": "t",
+        "nearest_reciprocal_pole_bar": 0.8946018667541443,
+        "reciprocal_pole_suspect": false,
+        "already_present_cycle_1": false,
+        "converged": true,
+        "new_recovered_root": true
+      },
+      {
+        "k_index": 104,
+        "Kx": 3.141592653589793,
+        "Ky": 1.9332877868244882,
+        "omega_bar": 0.856568507875814,
+        "sigma_balanced_h8": 2.0333614744944984e-08,
+        "sigma_balanced_h12": 8.983237547996912e-09,
+        "shift_h8_h12_bar": 3.9055894452567416e-07,
+        "nearest_reciprocal_pole_distance_bar": 0.0025837651383325833,
+        "nearest_reciprocal_pole_channel": "t",
+        "nearest_reciprocal_pole_bar": 0.8539847427374814,
+        "reciprocal_pole_suspect": false,
+        "already_present_cycle_1": false,
+        "converged": true,
+        "new_recovered_root": true
+      }
+    ]
+  },
+  "outputs": {
+    "candidate_csv": "candidate_diagnostics_cycle_2.csv",
+    "diagnostics_json": "resolution_diagnostics_cycle_2.json",
+    "diagnostic_image": "diagnostics_cycle_2.png",
+    "band_image": "bands_cycle_2.png"
+  },
+  "output_sha256": {
+    "candidate_diagnostics_cycle_2.csv": "0a019d199568b3d84377e37f25cb3672dfec66dff3a86ac320fbc7376f7380dc",
+    "resolution_diagnostics_cycle_2.json": "9c5dfc32a7569996fa10f3304dadce3fe2435152ef4b1a263d2daab4526cfc7d",
+    "diagnostics_cycle_2.png": "96a9718822e84ece7343118ad8da4246cbb567111d934b394312bd7cfd1829f7",
+    "bands_cycle_2.png": "e56d1922b7f44a65e456a7f2e953752ca3378e4b2b8f27b7eca8b04cb0cb3507"
+  }
+}

@@ -1,0 +1,603 @@
+[
+  {
+    "k_index": 1,
+    "lower_bar": 0.3162267562908631,
+    "upper_bar": 0.35622675629086314,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 1,
+    "lower_bar": 0.5852160498369606,
+    "upper_bar": 0.6252160498369607,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 1,
+    "lower_bar": 0.8341832621729212,
+    "upper_bar": 0.8741832621729212,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 1,
+    "lower_bar": 0.9538484211154836,
+    "upper_bar": 0.9938484211154837,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.3162267562908631,
+    "upper_bar": 0.35622675629086314,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.5852160498369606,
+    "upper_bar": 0.6252160498369607,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.8341832621729212,
+    "upper_bar": 0.8741832621729212,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.9538484211154836,
+    "upper_bar": 0.9938484211154837,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.3162267562908631,
+    "upper_bar": 0.35622675629086314,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.5852160498369606,
+    "upper_bar": 0.6252160498369607,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.8341832621729212,
+    "upper_bar": 0.8741832621729212,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.9538484211154836,
+    "upper_bar": 0.9938484211154837,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 8,
+    "lower_bar": 0.8561132748370519,
+    "upper_bar": 0.8961132748370519,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 8,
+    "lower_bar": 0.9412545080938539,
+    "upper_bar": 0.9837925595117012,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 9,
+    "lower_bar": 0.9208685728370204,
+    "upper_bar": 0.984696518003837,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 12,
+    "lower_bar": 0.7842360435600433,
+    "upper_bar": 0.8578234181982467,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 13,
+    "lower_bar": 0.7537875271079741,
+    "upper_bar": 0.8268512890828779,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 16,
+    "lower_bar": 0.4300996425999186,
+    "upper_bar": 0.47291112689671966,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 17,
+    "lower_bar": 0.44758593008832326,
+    "upper_bar": 0.4890438780941593,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 19,
+    "lower_bar": 0.7675947183918045,
+    "upper_bar": 0.8075947183918045,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 20,
+    "lower_bar": 0.4832357427032985,
+    "upper_bar": 0.5232357427032985,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 21,
+    "lower_bar": 0.8587999322989668,
+    "upper_bar": 0.8987999322989668,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 22,
+    "lower_bar": 0.7818777446385352,
+    "upper_bar": 0.8218777446385352,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 30,
+    "lower_bar": 0.4189433281902973,
+    "upper_bar": 0.45898734909461636,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 37,
+    "lower_bar": 0.033438955096198,
+    "upper_bar": 0.07357243528916159,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 37,
+    "lower_bar": 0.4848223001042802,
+    "upper_bar": 0.5248223001042802,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 37,
+    "lower_bar": 0.6498647725897924,
+    "upper_bar": 0.6898647725897924,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 38,
+    "lower_bar": 0.4848223001042802,
+    "upper_bar": 0.5248223001042802,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 38,
+    "lower_bar": 0.6498647725897924,
+    "upper_bar": 0.6898647725897924,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 0.4848223001042802,
+    "upper_bar": 0.5248223001042802,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 0.6498647725897924,
+    "upper_bar": 0.6898647725897924,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 40,
+    "lower_bar": 1e-06,
+    "upper_bar": 0.044301045894211175,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 0.4848223001042802,
+    "upper_bar": 0.5248223001042802,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 0.6498647725897924,
+    "upper_bar": 0.6898647725897924,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 42,
+    "lower_bar": 0.4848223001042802,
+    "upper_bar": 0.5248223001042802,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 42,
+    "lower_bar": 0.6498647725897924,
+    "upper_bar": 0.6898647725897924,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 43,
+    "lower_bar": 0.4848223001042802,
+    "upper_bar": 0.5248223001042802,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 43,
+    "lower_bar": 0.6498647725897924,
+    "upper_bar": 0.6898647725897924,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 50,
+    "lower_bar": 0.09957160207468758,
+    "upper_bar": 0.14495505028469052,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 52,
+    "lower_bar": 0.1284495873809365,
+    "upper_bar": 0.16868462611200824,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 72,
+    "lower_bar": 0.5592585878956583,
+    "upper_bar": 0.5994127275454133,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 73,
+    "lower_bar": 0.5700078631023766,
+    "upper_bar": 0.6104541464020956,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 79,
+    "lower_bar": 0.7851501709366442,
+    "upper_bar": 0.8406107579152354,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 80,
+    "lower_bar": 0.7620251260213459,
+    "upper_bar": 0.8335278644922126,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 87,
+    "lower_bar": 0.7558337112329865,
+    "upper_bar": 0.8276967115124299,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 90,
+    "lower_bar": 0.9120759077415916,
+    "upper_bar": 0.9520759077415917,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 91,
+    "lower_bar": 0.732651088113323,
+    "upper_bar": 0.8143234811137419,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 91,
+    "lower_bar": 0.9437260057695266,
+    "upper_bar": 0.9837260057695266,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 93,
+    "lower_bar": 0.44074537474919423,
+    "upper_bar": 0.48074537474919427,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 94,
+    "lower_bar": 0.43020143975539943,
+    "upper_bar": 0.47020143975539946,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 94,
+    "lower_bar": 0.7368122702636005,
+    "upper_bar": 0.7875993475466847,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 95,
+    "lower_bar": 0.4395318085666542,
+    "upper_bar": 0.4795318085666542,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 96,
+    "lower_bar": 0.43892502547538415,
+    "upper_bar": 0.4789250254753842,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 96,
+    "lower_bar": 0.7601095117307475,
+    "upper_bar": 0.8007107981651302,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 102,
+    "lower_bar": 0.40550409428383943,
+    "upper_bar": 0.44550409428383947,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 102,
+    "lower_bar": 0.841025862891114,
+    "upper_bar": 0.8948298669299506,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 103,
+    "lower_bar": 0.4040040934017976,
+    "upper_bar": 0.44400409340179764,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 103,
+    "lower_bar": 0.8052921832379676,
+    "upper_bar": 0.856181008819049,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 104,
+    "lower_bar": 0.4132699805457631,
+    "upper_bar": 0.4532699805457631,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 105,
+    "lower_bar": 0.4121663174691543,
+    "upper_bar": 0.4521663174691543,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 105,
+    "lower_bar": 0.8168994773397082,
+    "upper_bar": 0.8570308115652342,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 109,
+    "lower_bar": 0.7838149759458727,
+    "upper_bar": 0.8241830364633613,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 110,
+    "lower_bar": 0.884119171921351,
+    "upper_bar": 0.9254889272443714,
+    "reasons": [
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.3162267562908631,
+    "upper_bar": 0.35622675629086314,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.5852160498369606,
+    "upper_bar": 0.6252160498369607,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.8341832621729212,
+    "upper_bar": 0.8741832621729212,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.9538484211154836,
+    "upper_bar": 0.9938484211154837,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.3162267562908631,
+    "upper_bar": 0.35622675629086314,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.5852160498369606,
+    "upper_bar": 0.6252160498369607,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.8341832621729212,
+    "upper_bar": 0.8741832621729212,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.9538484211154836,
+    "upper_bar": 0.9938484211154837,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.3162267562908631,
+    "upper_bar": 0.35622675629086314,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.5852160498369606,
+    "upper_bar": 0.6252160498369607,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.8147591024533914,
+    "upper_bar": 0.8741832621729212,
+    "reasons": [
+      "high_symmetry_multiplicity",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.9538484211154836,
+    "upper_bar": 0.9938484211154837,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  }
+]

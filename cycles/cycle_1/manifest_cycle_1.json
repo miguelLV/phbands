@@ -1,0 +1,46 @@
+{
+  "cycle": 1,
+  "purpose": "Filtrar candidatos espurios mediante SVD equilibrada, convergencia en h y continuidad en k",
+  "input": "C:\\Users\\migue\\OneDrive\\Documents\\phbands\\cycles\\cycle_0b\\bands_cycle_0b.csv",
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "matplotlib": "3.11.1"
+  },
+  "validation": {
+    "h_primary": 8,
+    "h_check": 12,
+    "half_window_bar": 0.0022613065326633165,
+    "sigma_primary_max": 0.0001,
+    "sigma_check_max": 0.005,
+    "max_shift_bar": 0.002,
+    "continuity_radius": 2,
+    "max_neighbor_delta_bar_per_index": 0.035,
+    "bessel_pole_guard": 0.01,
+    "pole_support_radius": 4,
+    "min_pole_support": 5,
+    "pole_support_delta_bar": 0.015,
+    "low_frequency_bar": 0.01,
+    "gamma_neighborhood": 0.2
+  },
+  "result": {
+    "elapsed_s": 192.0984917000169,
+    "input_candidates": 621,
+    "accepted_candidates": 612,
+    "rejected_candidates": 9,
+    "rejection_reasons": {
+      "unsupported_bessel_pole": 7,
+      "matrix_and_continuity": 1,
+      "low_frequency_away_from_gamma": 1
+    }
+  },
+  "outputs": {
+    "csv": "candidate_validation_cycle_1.csv",
+    "image": "bands_cycle_1.png"
+  },
+  "output_sha256": {
+    "candidate_validation_cycle_1.csv": "c9ede7ceffbc478b4726169de7cb21eabd46a339686b1c5d48734152a796b1a9",
+    "bands_cycle_1.png": "f1652a9b9275b59b75907f7a8358fe815702c29d7681091af5b97c814938edc5"
+  }
+}

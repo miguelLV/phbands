@@ -17,3 +17,5 @@ dist/
 .DS_Store
 Thumbs.db
 .claude/scheduled_tasks.lock
+tmp/
+runs/
