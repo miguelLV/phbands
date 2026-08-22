@@ -13,31 +13,12 @@ import numpy as np
 REPOSITORY = Path(__file__).resolve().parents[1]
 
 
-def poisson_from_speed_ratio(ratio: float) -> float:
-    ratio2 = ratio**2
-    return (ratio2 - 2.0) / (2.0 * (ratio2 - 1.0))
-
-
-def young_from_rho_ct_nu(rho: float, c_t: float, nu: float) -> float:
-    return 2.0 * rho * c_t**2 * (1.0 + nu)
-
-
-BE_NU = poisson_from_speed_ratio(1.44)
-AU_NU = poisson_from_speed_ratio(2.71)
-BE_E = young_from_rho_ct_nu(1.85, 13.11 / 1.44, BE_NU)
-AU_E = young_from_rho_ct_nu(19.5, 3.36 / 2.71, AU_NU)
-
-
-def elastic_speeds(rho: float, young: float, nu: float) -> tuple[float, float, float]:
-    if rho <= 0 or young <= 0:
-        raise ValueError("rho y E deben ser positivos")
-    if not (-1.0 < nu < 0.5):
-        raise ValueError("nu debe satisfacer -1 < nu < 0.5 para un medio isotropico estable")
-    mu = young / (2.0 * (1.0 + nu))
-    lam = young * nu / ((1.0 + nu) * (1.0 - 2.0 * nu))
-    c_t = float(np.sqrt(mu / rho))
-    c_l = float(np.sqrt((lam + 2.0 * mu) / rho))
-    return c_l, c_t, mu
+def validate_medium(label: str, rho: float, c_l: float, c_t: float) -> float:
+    if rho <= 0 or c_l <= 0 or c_t <= 0:
+        raise ValueError(f"rho, c_l y c_t del {label} deben ser positivos")
+    if c_l <= c_t:
+        raise ValueError(f"c_l debe ser mayor que c_t en el {label}")
+    return rho * c_t**2
 
 
 def parser() -> argparse.ArgumentParser:
@@ -48,11 +29,11 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--polarization", choices=("inplane", "antiplane"), default="inplane")
     result.add_argument("--name", default="custom", help="Nombre del sistema mostrado en figuras y manifiesto")
     result.add_argument("--host-rho", type=float, default=1.85, help="Densidad del anfitrion")
-    result.add_argument("--host-E", type=float, default=BE_E, help="Modulo de Young del anfitrion")
-    result.add_argument("--host-nu", type=float, default=BE_NU, help="Razon de Poisson del anfitrion")
+    result.add_argument("--host-cl", type=float, default=13.11, help="Velocidad longitudinal del anfitrion")
+    result.add_argument("--host-ct", type=float, default=13.11 / 1.44, help="Velocidad transversal del anfitrion")
     result.add_argument("--inclusion-rho", type=float, default=19.5, help="Densidad del cilindro")
-    result.add_argument("--inclusion-E", type=float, default=AU_E, help="Modulo de Young del cilindro")
-    result.add_argument("--inclusion-nu", type=float, default=AU_NU, help="Razon de Poisson del cilindro")
+    result.add_argument("--inclusion-cl", type=float, default=3.36, help="Velocidad longitudinal del cilindro")
+    result.add_argument("--inclusion-ct", type=float, default=3.36 / 2.71, help="Velocidad transversal del cilindro")
     geometry = result.add_mutually_exclusive_group()
     geometry.add_argument("--filling-fraction", type=float, default=0.0908, help="Fraccion de area pi*(r/a)^2")
     geometry.add_argument("--radius-ratio", type=float, help="Radio normalizado r/a")
@@ -102,9 +83,9 @@ def main():
     if args.omega_max <= 0 or args.k_per_segment < 2 or args.n_scan < 20 or args.m_max < 0:
         raise ValueError("omega-max, k-per-segment, n-scan y m-max deben ser validos y positivos")
     filling, radius = configure_geometry(args)
-    host_cl, host_ct, host_mu = elastic_speeds(args.host_rho, args.host_E, args.host_nu)
-    inclusion_cl, inclusion_ct, inclusion_mu = elastic_speeds(
-        args.inclusion_rho, args.inclusion_E, args.inclusion_nu
+    host_mu = validate_medium("anfitrion", args.host_rho, args.host_cl, args.host_ct)
+    inclusion_mu = validate_medium(
+        "cilindro", args.inclusion_rho, args.inclusion_cl, args.inclusion_ct
     )
     output = (args.output or REPOSITORY / "runs" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.name}").resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -115,8 +96,8 @@ def main():
         from phbands.inplane.media import InPlaneMedium
 
         configure_common(engine, args, output, filling, radius)
-        engine.HOST = InPlaneMedium(args.host_rho, host_cl, host_ct)
-        engine.INCLUSION = InPlaneMedium(args.inclusion_rho, inclusion_cl, inclusion_ct)
+        engine.HOST = InPlaneMedium(args.host_rho, args.host_cl, args.host_ct)
+        engine.INCLUSION = InPlaneMedium(args.inclusion_rho, args.inclusion_cl, args.inclusion_ct)
         engine.OMEGA_SCALE = 2 * np.pi * engine.HOST.c_t
         engine.POLE_CHECK_H = args.h_pole
         engine.CONTINUITY_RECOVERY = True
@@ -134,8 +115,11 @@ def main():
         engine.ADAPTIVE_MULTIPLICITY = True
 
     print(f"Salida: {output}")
-    print(f"Host: cl={host_cl:.8g}, ct={host_ct:.8g}, nu={args.host_nu:.8g}")
-    print(f"Inclusion: cl={inclusion_cl:.8g}, ct={inclusion_ct:.8g}, nu={args.inclusion_nu:.8g}")
+    print(f"Host: rho={args.host_rho:.8g}, cl={args.host_cl:.8g}, ct={args.host_ct:.8g}")
+    print(
+        f"Inclusion: rho={args.inclusion_rho:.8g}, "
+        f"cl={args.inclusion_cl:.8g}, ct={args.inclusion_ct:.8g}"
+    )
     print(f"Geometria: filling={filling:.8g}, r/a={radius:.8g}")
     engine.main()
 

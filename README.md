@@ -38,27 +38,21 @@ python examples\run_custom_bands.py `
   --omega-max 0.5
 ```
 
-Ejemplo antiplano modificando razones de Poisson y fraccion de llenado:
+Ejemplo antiplano modificando velocidades y fraccion de llenado:
 
 ```powershell
 python examples\run_custom_bands.py `
   --polarization antiplane `
-  --name exploracion-nu `
-  --host-rho 1.85 --host-E 377.3 --host-nu 0.03 `
-  --inclusion-rho 19.5 --inclusion-E 78.5 --inclusion-nu 0.42 `
+  --name exploracion-velocidades `
+  --host-rho 1.85 --host-cl 13.11 --host-ct 9.1042 `
+  --inclusion-rho 19.5 --inclusion-cl 3.36 --inclusion-ct 1.2399 `
   --filling-fraction 0.12
 ```
 
-Las unidades deben ser consistentes. Usar densidad en `g/cm^3` y modulo de
-Young en `GPa` produce velocidades en `km/s`, como en el articulo de MEI.
-El programa convierte `(rho, E, nu)` a
-
-```text
-mu = E / (2*(1 + nu))
-lambda = E*nu / ((1 + nu)*(1 - 2*nu))
-ct = sqrt(mu/rho)
-cl = sqrt((lambda + 2*mu)/rho)
-```
+Las unidades deben ser consistentes. Los valores predeterminados usan densidad
+en `g/cm^3` y velocidades en `km/s`, como en el articulo de MEI. El solver
+calcula internamente `mu = rho*ct^2` y, para el problema in-plane,
+`lambda = rho*(cl^2 - 2*ct^2)`.
 
 Cada ejecucion crea una carpeta dentro de `runs/` con figura, CSV de bandas,
 diagnosticos de candidatos, ventanas activadas y un manifiesto JSON. `runs/`
