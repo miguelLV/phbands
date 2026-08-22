@@ -65,6 +65,20 @@ python examples\run_custom_bands.py `
 Para una cavidad no se usan `inclusion-rho`, `inclusion-cl` ni
 `inclusion-ct`. La cavidad in-plane aun no esta implementada.
 
+Para certificar individualmente las raices de una cavidad antiplana, agregue
+`--certify`. El ciclo 8 escanea con `m-max`, y valida cada candidato con
+`m-max`, `m-max+1` y `m-max+2`, ademas de los cortes `h-primary`, `h-check`
+y `h-pole`. Produce una figura solo con bandas certificadas y otra que separa
+soluciones certificadas, inciertas y rechazadas. Por ejemplo:
+
+```powershell
+python examples\run_custom_bands.py `
+  --polarization antiplane --inclusion-type cavity --certify `
+  --name cavidad-caucho-certificada `
+  --host-rho 0.920 --host-cl 0.04 --host-ct 0.03 `
+  --filling-fraction 0.70 --omega-max 1.3 --n-scan 520 --m-max 2
+```
+
 Las unidades deben ser consistentes. Los valores predeterminados usan densidad
 en `g/cm^3` y velocidades en `km/s`, como en el articulo de MEI. El solver
 calcula internamente `mu = rho*ct^2` y, para el problema in-plane,

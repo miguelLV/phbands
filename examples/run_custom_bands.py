@@ -50,6 +50,11 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--h-primary", type=int, default=8, help="Corte primario de suma de red")
     result.add_argument("--h-check", type=int, default=12, help="Corte de validacion")
     result.add_argument("--h-pole", type=int, default=16, help="Corte adicional cerca de polos")
+    result.add_argument(
+        "--certify",
+        action="store_true",
+        help="Certifica cada raiz antiplana de cavidad con los cortes m, m+1 y m+2",
+    )
     result.add_argument("--output", type=Path, help="Directorio de salida; por defecto runs/<fecha>_<nombre>")
     return result
 
@@ -97,6 +102,8 @@ def main():
         )
     elif args.polarization != "antiplane":
         raise ValueError("inclusion-type cavity solo esta implementado para polarization antiplane")
+    if args.certify and not (args.polarization == "antiplane" and args.inclusion_type == "cavity"):
+        raise ValueError("--certify solo esta disponible para cavidades antiplanas")
     output = (args.output or REPOSITORY / "runs" / f"{datetime.now():%Y%m%d_%H%M%S}_{args.name}").resolve()
     output.mkdir(parents=True, exist_ok=True)
 
@@ -113,18 +120,21 @@ def main():
         engine.CONTINUITY_RECOVERY = True
         engine.MAX_SHIFT_BAR = 5e-4
     else:
-        sys.path.insert(0, str(REPOSITORY / "cycles" / "cycle_6"))
-        import run_cycle_6 as engine
+        cycle = "cycle_8" if args.certify else "cycle_6"
+        sys.path.insert(0, str(REPOSITORY / "cycles" / cycle))
+        engine = __import__(f"run_{cycle}")
         from phbands.media import HostMedium
 
         configure_common(engine, args, output, filling, radius)
         engine.HOST = HostMedium(host_mu, args.host_rho)
         if args.inclusion_type == "solid":
             engine.INCLUSION = HostMedium(inclusion_mu, args.inclusion_rho)
-        engine.SCATTERER_KIND = args.inclusion_type
+        if not args.certify:
+            engine.SCATTERER_KIND = args.inclusion_type
         engine.OMEGA_SCALE = 2 * np.pi * engine.HOST.c_t
         engine.H_POLE_CHECK = args.h_pole
-        engine.ADAPTIVE_MULTIPLICITY = True
+        if not args.certify:
+            engine.ADAPTIVE_MULTIPLICITY = True
 
     print(f"Salida: {output}")
     print(f"Host: rho={args.host_rho:.8g}, cl={args.host_cl:.8g}, ct={args.host_ct:.8g}")
