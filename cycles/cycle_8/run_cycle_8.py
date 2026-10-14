@@ -27,7 +27,7 @@ from phbands.rootfinding.certification import (
     null_mode_diagnostics,
     prolongated_residual,
 )
-from phbands.rootfinding.validation import refine_matrix_candidate
+from phbands.rootfinding.validation import refine_with_expansion
 from phbands.scatterer import CavityScatterer
 from phbands.secular import SecularProblem
 
@@ -142,13 +142,17 @@ def certify_candidate(candidate: dict, path, problems: list[SecularProblem]) -> 
     k = path.k_points[index]
     frequency = float(candidate["omega_bar"])
     level_data = []
+    window_expansions = []
     previous_omega = frequency * OMEGA_SCALE
-    half_window = CERTIFY_HALF_WINDOW_BAR * OMEGA_SCALE
+    initial_half_window = CERTIFY_HALF_WINDOW_BAR * OMEGA_SCALE
     for problem in problems:
-        refined = refine_matrix_candidate(lambda value, p=problem: p.M(value, k), previous_omega, half_window)
+        refined, used_window = refine_with_expansion(
+            lambda value, p=problem: p.M(value, k), previous_omega, initial_half_window
+        )
         matrix = problem.M(refined.omega, k)
         mode = null_mode_diagnostics(matrix)
         level_data.append((refined, mode, matrix))
+        window_expansions.append(round(used_window / initial_half_window))
         previous_omega = refined.omega
     frequencies = [item[0].omega / OMEGA_SCALE for item in level_data]
     shifts = [abs(frequencies[i] - frequencies[i - 1]) for i in range(1, len(frequencies))]
@@ -184,6 +188,7 @@ def certify_candidate(candidate: dict, path, problems: list[SecularProblem]) -> 
         record[f"{prefix}_sigma"] = mode.sigma_min
         record[f"{prefix}_residual"] = mode.relative_residual
         record[f"{prefix}_edge_weight"] = mode.edge_weight
+        record[f"{prefix}_window_expansions"] = window_expansions[level - 1]
     for level, value in enumerate(shifts, 2):
         record[f"level_{level}_shift_bar"] = value
         record[f"level_{level}_overlap"] = overlaps[level - 2]

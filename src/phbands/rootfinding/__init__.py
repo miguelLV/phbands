@@ -6,6 +6,7 @@ from .validation import (
     balanced_sigma_min,
     equilibrate_matrix,
     refine_matrix_candidate,
+    refine_with_expansion,
 )
 from .gap_detection import GapTrigger, detect_bridge_gaps
 
@@ -18,6 +19,7 @@ __all__ = [
     "balanced_sigma_min",
     "equilibrate_matrix",
     "refine_matrix_candidate",
+    "refine_with_expansion",
     "GapTrigger",
     "detect_bridge_gaps",
 ]

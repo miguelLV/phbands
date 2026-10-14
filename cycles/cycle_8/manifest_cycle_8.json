@@ -1,0 +1,101 @@
+{
+  "cycle": 8,
+  "purpose": "Certificacion por raiz mediante SVD, convergencia multipolar, estabilidad modal y polos",
+  "physics": {
+    "system": "cavidad-en-caucho",
+    "polarization": "antiplane_z",
+    "scatterer_kind": "cavity",
+    "filling_fraction": 0.7,
+    "radius_over_a": 0.4720348719413148,
+    "host": {
+      "rho": 0.92,
+      "mu": 0.000828,
+      "c_t": 0.03
+    },
+    "normalization": "omega*a/(2*pi*c_t_host)"
+  },
+  "numerics": {
+    "n_scan": 520,
+    "n_per_segment": 40,
+    "scan_m_max": 2,
+    "certification_m_levels": [
+      2,
+      3,
+      4
+    ],
+    "certification_h_levels": [
+      8,
+      12,
+      16
+    ],
+    "thresholds": {
+      "sigma_max": 0.0001,
+      "residual_max": 0.0001,
+      "shift_max_bar": 0.00075,
+      "overlap_min": 0.9,
+      "edge_weight_max": 0.08,
+      "prolongated_residual_max": 0.15,
+      "pole_guard_bar": 0.002
+    }
+  },
+  "result": {
+    "raw_scan_candidates": 516,
+    "recovered_candidates": 80,
+    "deduplicated_candidates": 596,
+    "certified": 69,
+    "uncertain": 521,
+    "rejected": 6,
+    "multiplicity_events": [
+      {
+        "k_index": 0,
+        "omega_bar": 0.8819024421012318,
+        "second_singular_ratio": 7.370382417140724e-06
+      },
+      {
+        "k_index": 0,
+        "omega_bar": 1.1165947031085373,
+        "second_singular_ratio": 6.2519877193728e-05
+      },
+      {
+        "k_index": 40,
+        "omega_bar": 1.2293566217636376,
+        "second_singular_ratio": 2.8566553367674374e-08
+      },
+      {
+        "k_index": 119,
+        "omega_bar": 0.8819024421012318,
+        "second_singular_ratio": 7.370382417140724e-06
+      },
+      {
+        "k_index": 119,
+        "omega_bar": 1.1165947031085373,
+        "second_singular_ratio": 6.2519877193728e-05
+      }
+    ]
+  },
+  "timing_s": {
+    "global_scan": 131.84120710002026,
+    "certification": 736.8354531999794,
+    "total": 1052.355690299999
+  },
+  "environment": {
+    "python": "3.13.15",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "matplotlib": "3.11.1"
+  },
+  "outputs": {
+    "certification_csv": "certification_cycle_8.csv",
+    "certified_bands_csv": "bands_certified_cycle_8.csv",
+    "final_image": "bands_certified_cycle_8.png",
+    "diagnostic_image": "bands_certification_diagnostic_cycle_8.png",
+    "rejected_initial": "rejected_initial_candidates_cycle_8.json"
+  },
+  "output_sha256": {
+    "certification_cycle_8.csv": "c3c3f859af5907939c65fe7ad7607885763878a9ef2f5bd16f7b92b9db853107",
+    "bands_certified_cycle_8.csv": "2faf6260a2ab9bc44afdd53b3a5f2059b86158e21100df9d6b92bfa1f4841003",
+    "bands_certified_cycle_8.png": "7f3d160b33a12fae8b6c7437130bd58d0bb8751d9d1fe9097de1af68d99d632e",
+    "bands_certification_diagnostic_cycle_8.png": "83522eddf8d6f8f748500d575eb4ddfb63c548bacad246a8d4c6026daccf60ca",
+    "rejected_initial_candidates_cycle_8.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  }
+}

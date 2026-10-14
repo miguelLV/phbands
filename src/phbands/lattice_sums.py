@@ -103,9 +103,90 @@ def chin_accelerated(l: int, kappa: complex, K: np.ndarray,
 
 @dataclass
 class LatticeSumConfig:
-    """Parametros numericos de la suma de red acelerada."""
+    """Parametros numericos de la suma de red acelerada.
+
+    Sobre `rho_over_a` y `gauge_alternatives_over_a` -- ver
+    docs/diagnostico_soluciones_espurias.md, anexo sobre el parametro rho.
+
+    La representacion acelerada se obtiene evaluando la funcion de Green
+    cuasi-periodica en un punto auxiliar `rho` e identificando coeficientes
+    (Botten et al., PIER 41, ec. 22 + el truco de integracion que sube el
+    orden de Bessel). Ese `rho` es un PARAMETRO LIBRE de la representacion,
+    no un dato fisico: `S_l` no depende de el. Pero para despejar `S_l` hay
+    que dividir por `J_{|l|+1}(kappa*rho)`, asi que en los ceros de esa
+    Bessel la representacion tiene una singularidad FICTICIA -- removible
+    analiticamente, pero rodeada de una micro-banda de cancelacion
+    catastrofica (ancho ~3e-5 en omega_bar) donde el valor calculado es
+    basura. Con `rho = a` esos ceros caen en omega_bar = 0.6098, 0.8174,
+    1.0154, 1.2077, ... es decir, dentro de la ventana de interes tipica.
+
+    `gauge_alternatives_over_a` activa el "parche de gauge local": para cada
+    orden se elige, entre `rho_over_a` y las alternativas, el radio que
+    MAXIMIZA |J_{|l|+1}(kappa*rho)|, o sea el mejor condicionado. Como todos
+    los radios describen la misma cantidad fisica, esto no es un filtro ni
+    una heuristica: es evaluar lo mismo donde se puede evaluar bien.
+
+    Por que un criterio de maximo y no un umbral fijo: hay dos regimenes que
+    compiten. En baja frecuencia `J_{|l|+1}(kappa*rho) ~ (kappa*rho/2)^{|l|+1}`
+    se hace minusculo para ordenes altos, y ahi conviene el `rho` MAS GRANDE;
+    cerca de un cero ficticio conviene alejarse de el. Maximizar |J| resuelve
+    ambos casos automaticamente y sin sintonizar nada.
+
+    Restriccion: el teorema de adicion exige `rho` menor que la distancia al
+    vecino mas cercano (`a`); Botten et al. piden `rho` dentro del circulo
+    inscrito en la celda de Wigner-Seitz (`rho < a/2`). El valor historico
+    `rho = a` esta justo en el borde de convergencia (con `rho = 1.2 a` la
+    serie ya diverge: ~60% de error, medido).
+
+    Por defecto (`rho_over_a = 1.0`, sin alternativas) el comportamiento es
+    bit a bit identico al historico.
+    """
 
     h_max: int = 30       # capas de red reciproca sumadas
+    rho_over_a: float = 1.0
+    gauge_alternatives_over_a: tuple[float, ...] = ()
+
+
+def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: SquareLattice,
+                         l_values: np.ndarray, orders: np.ndarray,
+                         rho: float, h_max: int) -> np.ndarray:
+    """S_l para todos los `l_values` de una vez, evaluados con un `rho` dado.
+
+    `A_c` y los vectores reciprocos siguen viniendo de la red (`a`); `rho`
+    aparece unicamente dentro de los argumentos de Bessel/Hankel.
+    """
+    A_c = lattice.cell_area
+
+    Gx, Gy = lattice.reciprocal_vectors_xy(h_max)
+    Qx = Gx + K[0]
+    Qy = Gy + K[1]
+    Qh = np.hypot(Qx, Qy)          # shape (Nh,)
+    thetah = np.arctan2(Qy, Qx)    # shape (Nh,)
+    denom_pole = Qh * (Qh**2 - kappa**2)  # shape (Nh,)
+    near_zero = np.isclose(Qh, 0.0, atol=1e-12)
+
+    # J_{orders}(Qh*rho): shape (Nl, Nh) via broadcasting
+    with np.errstate(divide="ignore", invalid="ignore"):
+        Jvals = jv(orders[:, None], (Qh * rho)[None, :])
+        phase = np.exp(-1j * l_values[:, None] * thetah[None, :])  # (Nl,Nh)
+        terms = Jvals * phase / denom_pole[None, :]
+
+    if np.any(near_zero):
+        # limite analitico en Qh->0: lim J_1(Qh*rho)/Qh = rho/2 si order==1, si no 0
+        limit_order1 = (rho / 2.0) / (-(kappa**2))
+        limit_per_l = np.where(orders == 1, limit_order1, 0.0)  # (Nl,)
+        terms = np.where(near_zero[None, :], limit_per_l[:, None], terms)
+
+    terms = np.where(np.isfinite(terms), terms, 0.0)
+    recip_sum = terms.sum(axis=1)  # shape (Nl,)
+
+    prefactor = 1.0 / jv(orders, kappa * rho)  # shape (Nl,)
+    bracket = -4.0 * (1j ** (l_values + 1)) * kappa / A_c * recip_sum
+    zero_idx = np.where(l_values == 0)[0]
+    if zero_idx.size:
+        bracket[zero_idx] += -(hankel1(1, kappa * rho) + 2j / (np.pi * kappa * rho))
+
+    return prefactor * bracket  # shape (Nl,)
 
 
 def S_matrix(kappa: complex, K: np.ndarray, lattice: SquareLattice,
@@ -118,46 +199,38 @@ def S_matrix(kappa: complex, K: np.ndarray, lattice: SquareLattice,
     que reevalua la suma reciproca por separado para cada l. Debe dar
     exactamente los mismos valores que llamar `chin_accelerated` l por l
     (ver tests/validacion) -- aqui solo se optimiza velocidad.
+
+    Si `config.gauge_alternatives_over_a` no esta vacio, aplica el parche de
+    gauge local descrito en `LatticeSumConfig`.
     """
     if config is None:
         config = LatticeSumConfig()
     a = lattice.a
-    A_c = lattice.cell_area
     modes = np.arange(-m_max, m_max + 1)
     n_modes = len(modes)
     l_values = np.arange(-2 * m_max, 2 * m_max + 1)   # shape (Nl,)
     orders = np.abs(l_values) + 1                      # shape (Nl,)
 
-    Gx, Gy = lattice.reciprocal_vectors_xy(config.h_max)
-    Qx = Gx + K[0]
-    Qy = Gy + K[1]
-    Qh = np.hypot(Qx, Qy)          # shape (Nh,)
-    thetah = np.arctan2(Qy, Qx)    # shape (Nh,)
-    denom_pole = Qh * (Qh**2 - kappa**2)  # shape (Nh,)
-    near_zero = np.isclose(Qh, 0.0, atol=1e-12)
+    rho = config.rho_over_a * a
+    S_l_values = _S_l_values_for_rho(kappa, K, lattice, l_values, orders, rho, config.h_max)
 
-    # J_{orders}(Qh*a): shape (Nl, Nh) via broadcasting
-    with np.errstate(divide="ignore", invalid="ignore"):
-        Jvals = jv(orders[:, None], (Qh * a)[None, :])
-        phase = np.exp(-1j * l_values[:, None] * thetah[None, :])  # (Nl,Nh)
-        terms = Jvals * phase / denom_pole[None, :]
-
-    if np.any(near_zero):
-        # limite analitico en Qh->0 (ver chin_accelerated): a/2/(-kappa^2) si order==1, si no 0
-        limit_order1 = (a / 2.0) / (-(kappa**2))
-        limit_per_l = np.where(orders == 1, limit_order1, 0.0)  # (Nl,)
-        terms = np.where(near_zero[None, :], limit_per_l[:, None], terms)
-
-    terms = np.where(np.isfinite(terms), terms, 0.0)
-    recip_sum = terms.sum(axis=1)  # shape (Nl,)
-
-    prefactor = 1.0 / jv(orders, kappa * a)  # shape (Nl,)
-    bracket = -4.0 * (1j ** (l_values + 1)) * kappa / A_c * recip_sum
-    zero_idx = np.where(l_values == 0)[0]
-    if zero_idx.size:
-        bracket[zero_idx] += -(hankel1(1, kappa * a) + 2j / (np.pi * kappa * a))
-
-    S_l_values = prefactor * bracket  # shape (Nl,), indexado por l_values
+    if config.gauge_alternatives_over_a:
+        # Condicionamiento actual de cada orden: |J_{|l|+1}(kappa*rho)|.
+        strength = np.abs(jv(orders, kappa * rho))
+        for fraction in config.gauge_alternatives_over_a:
+            rho_alt = fraction * a
+            strength_alt = np.abs(jv(orders, kappa * rho_alt))
+            better = strength_alt > strength
+            if not np.any(better):
+                continue  # ningun orden mejora: no se paga nada
+            # Se recalculan SOLO los ordenes que mejoran (tipicamente 1 o 2 de
+            # 4*m_max+1), no la tabla completa.
+            S_alt = _S_l_values_for_rho(
+                kappa, K, lattice, l_values[better], orders[better], rho_alt, config.h_max
+            )
+            S_l_values = S_l_values.copy()
+            S_l_values[better] = S_alt
+            strength = np.where(better, strength_alt, strength)
 
     # armar la matriz Toeplitz S_{mn} = S_{m-n}
     l_to_idx = {int(l): i for i, l in enumerate(l_values)}

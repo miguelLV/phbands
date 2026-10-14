@@ -93,3 +93,43 @@ def refine_matrix_candidate(
         raw_sigma_max=float(singular[0]),
         success=bool(result.success),
     )
+
+
+def refine_with_expansion(
+    matrix_func: Callable[[float], np.ndarray],
+    omega: float,
+    initial_half_window: float,
+    max_expansions: int = 4,
+    expansion_factor: float = 2.0,
+    boundary_tol: float = 1e-3,
+    refine_tol: float = 1e-9,
+) -> tuple[MatrixCandidateValidation, float]:
+    """Como `refine_matrix_candidate`, pero detecta cuando la ventana de
+    busqueda era demasiado angosta y la ensancha en vez de devolver un
+    resultado pegado al borde.
+
+    `minimize_scalar(..., method="bounded")` con una ventana fija puede
+    converger EXACTAMENTE al borde permitido cuando el minimo real esta
+    mas alla de ese borde -- no porque no exista una raiz cercana, sino
+    porque el optimizador esta forzado a quedarse dentro de los limites.
+    Ese resultado no es un minimo genuino de sigma_min: tipicamente viene
+    con sigma/residuo grandes, y arruina en cascada cualquier comparacion
+    entre niveles que dependa de el (traslape modal, residuo prolongado).
+    Se detecto empiricamente en la certificacion de raices antiplanas de
+    cavidad (ver HANDOFF.md): >90% de los candidatos marcados "inciertos"
+    tenian el desplazamiento pegado exactamente al ancho de la ventana de
+    busqueda entre niveles.
+
+    Devuelve `(resultado, half_window_usado)` -- el segundo valor sirve
+    para diagnostico (cuantas veces hubo que ensanchar).
+    """
+    half_window = initial_half_window
+    result = refine_matrix_candidate(matrix_func, omega, half_window, refine_tol)
+    for _ in range(max_expansions):
+        distance_from_center = abs(result.omega - omega)
+        at_boundary = abs(distance_from_center - half_window) <= boundary_tol * half_window
+        if not at_boundary:
+            break
+        half_window *= expansion_factor
+        result = refine_matrix_candidate(matrix_func, omega, half_window, refine_tol)
+    return result, half_window
