@@ -28,6 +28,7 @@ from phbands.rootfinding.validation import equilibrate_matrix, refine_matrix_can
 from phbands.scatterer import (
     CavityAzimuthalPredeformedScatterer,
     CavityScatterer,
+    MooneyRivlinPredeformedScatterer,
     SolidCylinderScatterer,
 )
 from phbands.secular import SecularProblem
@@ -106,6 +107,10 @@ GAUGE_ALTERNATIVES_OVER_A = ()
 # T_n es PROVISIONAL, y el resultado es valido solo a O(D).
 AZIMUTHAL_R2 = None    # radio externo del anillo pre-deformado (debe cumplir RADIUS < r2 < A/2)
 AZIMUTHAL_PSI = 0.0    # angulo finito que giro el borde interno
+# Solo para SCATTERER_KIND == "mooney_rivlin_azimuthal" (capa exacta, sin truncar;
+# ver phbands.scatterer.mooney_rivlin_predeformed). Usa AZIMUTHAL_R2 y AZIMUTHAL_PSI.
+MOONEY_RIVLIN_BETA = 0.5       # beta = C2/(C1+C2); 0 = neo-Hookean (sin efecto)
+MOONEY_RIVLIN_CORE = "cavity"  # "cavity" o "solid" (usa INCLUSION)
 
 
 def sha256(path: Path) -> str:
@@ -127,6 +132,19 @@ def _inclusion_manifest(scatterer) -> dict:
             "advertencia": (
                 "ecuacion de onda PROVISIONAL, ver HANDOFF_azimuthal_predeformed_Tn.md"
             ),
+        }
+    if SCATTERER_KIND == "mooney_rivlin_azimuthal":
+        return {
+            "type": "mooney_rivlin_azimuthal_predeformed",
+            "core": MOONEY_RIVLIN_CORE,
+            "a": scatterer.a,
+            "b": scatterer.b,
+            "psi": scatterer.psi,
+            "beta": scatterer.beta,
+            "core_medium": None if scatterer.inclusion is None else {
+                "rho": scatterer.inclusion.rho, "mu": scatterer.inclusion.mu,
+            },
+            "validez": "exacto en psi (ecuacion incremental de Ogden sin truncar)",
         }
     return {"type": "solid", "rho": INCLUSION.rho, "mu": INCLUSION.mu, "c_t": INCLUSION.c_t}
 
@@ -455,9 +473,9 @@ def main():
     path = build_path([("M", 1, 1), ("Gamma", 0, 0), ("X", 1, 0), ("M", 1, 1)], A, N_PER_SEGMENT)
     if SCATTERER_KIND == "cavity":
         scatterer = CavityScatterer(RADIUS, HOST)
-    elif SCATTERER_KIND == "cavity_azimuthal":
+    elif SCATTERER_KIND in ("cavity_azimuthal", "mooney_rivlin_azimuthal"):
         if AZIMUTHAL_R2 is None:
-            raise ValueError("SCATTERER_KIND='cavity_azimuthal' requiere fijar AZIMUTHAL_R2")
+            raise ValueError(f"SCATTERER_KIND={SCATTERER_KIND!r} requiere fijar AZIMUTHAL_R2")
         if not RADIUS < AZIMUTHAL_R2 < A / 2:
             # El formalismo MST supone dispersores que no se solapan: el anillo
             # pre-deformado forma parte del dispersor, asi que debe caber dentro
@@ -466,9 +484,15 @@ def main():
                 f"se requiere RADIUS < AZIMUTHAL_R2 < A/2 = {A / 2}; "
                 f"se recibio RADIUS={RADIUS}, AZIMUTHAL_R2={AZIMUTHAL_R2}"
             )
-        scatterer = CavityAzimuthalPredeformedScatterer(
-            RADIUS, AZIMUTHAL_R2, AZIMUTHAL_PSI, HOST
-        )
+        if SCATTERER_KIND == "cavity_azimuthal":
+            scatterer = CavityAzimuthalPredeformedScatterer(
+                RADIUS, AZIMUTHAL_R2, AZIMUTHAL_PSI, HOST
+            )
+        else:
+            scatterer = MooneyRivlinPredeformedScatterer(
+                RADIUS, AZIMUTHAL_R2, AZIMUTHAL_PSI, MOONEY_RIVLIN_BETA, HOST,
+                None if MOONEY_RIVLIN_CORE == "cavity" else INCLUSION,
+            )
     else:
         scatterer = SolidCylinderScatterer(RADIUS, HOST, INCLUSION)
     def lattice_config(h_max: int) -> LatticeSumConfig:
