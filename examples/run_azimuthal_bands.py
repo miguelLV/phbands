@@ -33,6 +33,21 @@ Comparacion sin deformar (psi=0) contra deformada, misma geometria::
     python examples/run_azimuthal_bands.py --name sin-deformar --psi 0.0
     python examples/run_azimuthal_bands.py --name deformada    --psi 0.3
 
+Modelo Mooney-Rivlin exacto (``--model mooney-rivlin``)
+------------------------------------------------------
+Usa ``MooneyRivlinPredeformedScatterer``: la ecuacion incremental de Ogden SIN
+truncar en psi, con W = C1(I1-3) + C2(I2-3) y beta = C2/(C1+C2). Es exacto en
+psi (|1+2T_n| = 1 a precision de maquina) y admite un nucleo solido ademas de
+la cavidad. Con beta = 0 (neo-Hookean) o beta = 1 la pre-deformacion no cambia
+T_n en absoluto::
+
+    python examples/run_azimuthal_bands.py --name mr-cavidad \
+        --model mooney-rivlin --beta 0.5 --psi 0.5
+
+    python examples/run_azimuthal_bands.py --name mr-solido \
+        --model mooney-rivlin --beta 0.5 --psi 0.5 \
+        --core solid --inclusion-rho 1.2 --inclusion-ct 0.06
+
 Cada corrida escribe su carpeta en runs/ con figura, CSV y manifiesto.
 """
 
@@ -72,6 +87,18 @@ def parser() -> argparse.ArgumentParser:
                    help="Radio externo del anillo pre-deformado, r2/a (debe cumplir r1 < r2 < 0.5)")
     p.add_argument("--psi", type=float, default=0.2,
                    help="Angulo de rotacion del borde interno (parametro de pre-deformacion)")
+
+    # --- modelo de la capa ---
+    p.add_argument("--model", choices=("truncado", "mooney-rivlin"), default="truncado",
+                   help="truncado: T_n a O(D) del HANDOFF v2; mooney-rivlin: capa exacta en psi")
+    p.add_argument("--beta", type=float, default=0.5,
+                   help="[mooney-rivlin] beta = C2/(C1+C2); 0 = neo-Hookean (sin efecto)")
+    p.add_argument("--core", choices=("cavity", "solid"), default="cavity",
+                   help="[mooney-rivlin] nucleo r < r1: cavidad o inclusion solida")
+    p.add_argument("--inclusion-rho", type=float, default=None,
+                   help="[mooney-rivlin, core solid] densidad de la inclusion")
+    p.add_argument("--inclusion-ct", type=float, default=None,
+                   help="[mooney-rivlin, core solid] velocidad transversal de la inclusion")
 
     # --- numerica ---
     p.add_argument("--omega-max", type=float, default=1.3, help="Frecuencia normalizada maxima")
@@ -129,7 +156,19 @@ def main() -> None:
     engine.SYSTEM_LABEL = args.name
     engine.HOST_LABEL = "caucho"
 
-    engine.SCATTERER_KIND = "cavity_azimuthal"
+    if args.model == "mooney-rivlin":
+        if not 0 <= args.beta <= 1:
+            raise ValueError("beta debe estar en [0, 1]")
+        engine.SCATTERER_KIND = "mooney_rivlin_azimuthal"
+        engine.MOONEY_RIVLIN_BETA = args.beta
+        engine.MOONEY_RIVLIN_CORE = args.core
+        if args.core == "solid":
+            if args.inclusion_rho is None or args.inclusion_ct is None:
+                raise ValueError("--core solid requiere --inclusion-rho e --inclusion-ct")
+            engine.INCLUSION = HostMedium(mu=args.inclusion_rho * args.inclusion_ct**2,
+                                          rho=args.inclusion_rho)
+    else:
+        engine.SCATTERER_KIND = "cavity_azimuthal"
     engine.FILLING_FRACTION = filling
     engine.RADIUS = r1
     engine.AZIMUTHAL_R2 = r2
@@ -160,7 +199,17 @@ def main() -> None:
     print(f"Caucho     : rho={args.host_rho:.6g}, c_t={args.host_ct:.6g} (incompresible; c_l no interviene)")
     print(f"Cavidad    : r1/a={r1:.6g} (llenado {filling:.6g}), anillo hasta r2/a={r2:.6g}")
     print(f"Deformacion: psi={args.psi:.6g}  ->  D={D:.6g}")
+    print(f"Modelo     : {args.model}"
+          + (f" (beta={args.beta:.6g}, nucleo={args.core})" if args.model == "mooney-rivlin" else ""))
     print(f"Numerica   : m_max={args.m_max}, n_scan={args.n_scan}, k/tramo={args.k_per_segment}")
+
+    if args.model == "mooney-rivlin":
+        if args.beta * (1 - args.beta) == 0:
+            print("  AVISO: con beta = 0 (neo-Hookean) o beta = 1 la pre-deformacion no cambia T_n;")
+            print("         las bandas seran identicas a las del caso sin deformar.")
+        print()
+        engine.main()
+        return
 
     peor = unitarity_violation(engine, args)
     print(f"Validez    : defecto maximo de unitariedad |1+2T_n|-1 = {peor:.3%}")

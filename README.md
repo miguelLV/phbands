@@ -110,3 +110,17 @@ python -m pytest -q
 
 Los ciclos 5 y 7 contienen las corridas in-plane y antiplana de baja energia
 mas completas, respectivamente.
+
+## Capa pre-deformada Mooney-Rivlin (exacta en psi)
+
+`phbands.scatterer.MooneyRivlinPredeformedScatterer` calcula el `T_n` de una
+cavidad o inclusion solida de radio `a` rodeada por una capa de la matriz
+`a < r < b` pre-deformada azimutalmente (perfil de equilibrio Mooney-Rivlin,
+giro `psi` del borde interno, `beta = C2/(C1+C2)`). No trunca en `psi`: integra
+la ecuacion incremental de Ogden reducida a una ecuacion real. Con `beta = 0`
+(neo-Hookean) o `beta = 1` la pre-deformacion no cambia `T_n`.
+
+```powershell
+python examples\run_azimuthal_bands.py --name mr-cavidad `
+  --model mooney-rivlin --beta 0.5 --psi 0.5
+```
