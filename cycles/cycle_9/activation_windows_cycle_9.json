@@ -1,0 +1,270 @@
+[
+  {
+    "k_index": 1,
+    "lower_bar": 0.8759000003139479,
+    "upper_bar": 0.8879000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 2,
+    "lower_bar": 0.8759000003139479,
+    "upper_bar": 0.8879000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 3,
+    "lower_bar": 0.8519000003139479,
+    "upper_bar": 0.9119000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 4,
+    "lower_bar": 0.8519000003139479,
+    "upper_bar": 0.9119000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 27,
+    "lower_bar": 1.149581162457615,
+    "upper_bar": 1.1895811624576151,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 28,
+    "lower_bar": 1.1638285600293479,
+    "upper_bar": 1.2146449883034782,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 29,
+    "lower_bar": 1.1924978619665878,
+    "upper_bar": 1.2397088141493413,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 30,
+    "lower_bar": 1.2211671639038275,
+    "upper_bar": 1.2647726399952044,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 31,
+    "lower_bar": 0.8726242573963693,
+    "upper_bar": 0.9129799592595308,
+    "reasons": [
+      "continuity_mismatch",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 31,
+    "lower_bar": 1.1705757133078052,
+    "upper_bar": 1.2105757133078052,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 37,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 38,
+    "lower_bar": 1.2233566217636376,
+    "upper_bar": 1.2353566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 0.005080291293853966,
+    "upper_bar": 0.05200939156822597,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 39,
+    "lower_bar": 1.2233566217636376,
+    "upper_bar": 1.2353566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 40,
+    "lower_bar": 1e-06,
+    "upper_bar": 0.04773842950935564,
+    "reasons": [
+      "continuity_mismatch",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 0.0011351350849989686,
+    "upper_bar": 0.04806422059098047,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 41,
+    "lower_bar": 1.2233566217636376,
+    "upper_bar": 1.2353566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 42,
+    "lower_bar": 1.2233566217636376,
+    "upper_bar": 1.2353566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 43,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 44,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 45,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 46,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 47,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 48,
+    "lower_bar": 1.1993566217636376,
+    "upper_bar": 1.2593566217636376,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 60,
+    "lower_bar": 1.2298923260206494,
+    "upper_bar": 1.2699984439606231,
+    "reasons": [
+      "continuity_mismatch",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 62,
+    "lower_bar": 1.2127550257678748,
+    "upper_bar": 1.2527550257678748,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 63,
+    "lower_bar": 1.2204603212173044,
+    "upper_bar": 1.2604603212173044,
+    "reasons": [
+      "continuity_mismatch"
+    ]
+  },
+  {
+    "k_index": 65,
+    "lower_bar": 1.1918482054192638,
+    "upper_bar": 1.2319072570332832,
+    "reasons": [
+      "continuity_mismatch",
+      "one_to_one_bridge"
+    ]
+  },
+  {
+    "k_index": 114,
+    "lower_bar": 0.8519000003139479,
+    "upper_bar": 0.9119000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 115,
+    "lower_bar": 0.8519000003139479,
+    "upper_bar": 0.9119000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 116,
+    "lower_bar": 0.8519000003139479,
+    "upper_bar": 0.9119000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 117,
+    "lower_bar": 0.8759000003139479,
+    "upper_bar": 0.8879000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  },
+  {
+    "k_index": 118,
+    "lower_bar": 0.8759000003139479,
+    "upper_bar": 0.8879000003139479,
+    "reasons": [
+      "high_symmetry_multiplicity"
+    ]
+  }
+]

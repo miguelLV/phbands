@@ -258,6 +258,83 @@ Parametros calibrados: `m_max=2` (igual al usado en la tesis), `h_max=8`,
 Verificado contra `m_max=3,h_max=15,n_scan=300`: coincide a 3-4
 decimales.
 
+## [2026-08-22] Bug de ventana en `cycle_8` (certificación) — encontrado y corregido
+
+NOTA: esta sección documenta trabajo posterior a la reescritura sustancial
+que Miguel hizo por su cuenta (`cycles/cycle_0b`...`cycle_8`,
+`rootfinding/{validation,gap_detection,certification}.py`,
+`scatterer/solid_cylinder.py`, `examples/run_custom_bands.py`, `tests/`).
+Esa reescritura NO está descrita en las secciones de arriba de este
+archivo (siguen reflejando la arquitectura original v0.1) — para el estado
+actual del proyecto, `README.md` y `git log` son más confiables que el
+resto de este HANDOFF. Se mantiene esta sección solo para no perder el
+hilo de la sesión de debugging del 2026-08-22.
+
+**Problema reportado por Miguel**: para el sistema cavidad-en-caucho
+(`ν=0.7`, el caso más dificil — cavidades casi tocándose), hasta
+`cycle_7` el pipeline devolvía bandas con muchos puntos espurios.
+`cycle_8` (certificación por raíz subiendo `m_max=[2,3,4]`, `h=[8,12,16]`)
+intentó resolverlo, pero termina marcando como "inciertas" la gran
+mayoría de raíces, incluidas muchas que a simple vista se ven físicas
+(curvas suaves y continuas en el diagnóstico).
+
+**Diagnóstico** (corrida `runs/cycle8-cavidad-caucho-f070-final/`, nunca
+antes analizada en detalle — de hecho `cycles/cycle_8/` nunca se había
+ejecutado dentro de este repo, solo vía el CLI): de 596 candidatos, solo
+41 certificados, 551 "inciertos", 4 rechazados. Analizando
+`certification_custom.csv`: **91.5% de los "inciertos" (504 de 551)
+tienen `shift_bar` pegado exactamente al valor de
+`CERTIFY_HALF_WINDOW_BAR` (0.01) en algún nivel**.
+
+Causa raíz: `certify_candidate` (`cycles/cycle_8/run_cycle_8.py`) llama a
+`refine_matrix_candidate` con una ventana de búsqueda FIJA de ±0.01 (en
+`ω̄`) centrada en el resultado del nivel anterior. `minimize_scalar(...,
+method="bounded")` con esa ventana, cuando el mínimo verdadero de
+`sigma_min` está más allá del borde, converge EXACTAMENTE al borde
+permitido — no es un mínimo genuino (sigma/residuo quedan enormes, no
+cerca de cero), y arruina en cascada `modal_overlap`/`prolongated_residual`
+del nivel siguiente. No es un problema de raíces espurias ni
+(necesariamente) de convergencia física lenta en `m_max` — es la ventana
+de búsqueda, que es demasiado angosta para este sistema (`ν=0.7` desplaza
+raíces genuinas más de 0.01 en `ω̄` entre `m_max=2→3→4`, algo ya
+observado independientemente en la sesión anterior con `m_max=3→6`).
+
+**Fix** (`src/phbands/rootfinding/validation.py`,
+`refine_with_expansion`): envuelve `refine_matrix_candidate` detectando
+si el resultado cae en el borde de la ventana (`|resultado - centro| ≈
+half_window`); si es así, duplica la ventana y reintenta (hasta
+`max_expansions=4`). `cycle_8/run_cycle_8.py` fue actualizado para usarla
+en vez de `refine_matrix_candidate` directo, y ahora registra
+`level_N_..._window_expansions` en el CSV de certificación para
+diagnóstico. Se decidió con Miguel esta opción (vs. simplemente agrandar
+`CERTIFY_HALF_WINDOW_BAR` fijo) porque en zonas de bandas densas
+(`ω̄≈0.85-1.25` en este sistema) una ventana fija más ancha arriesgaba
+que el refinamiento saltara a una banda vecina distinta; la expansión
+adaptativa solo ensancha cuando hace falta.
+
+Validado en 3 candidatos previamente atascados (`ω̄≈0.89, 1.15, 1.21`):
+`sigma_min` pasó de `~0.3-0.9` (no convergido, pegado al borde) a
+`~1e-8` (precisión de máquina) una vez que la ventana se expandió lo
+necesario (hasta 16x en algunos casos). Caveat honesto: expansiones tan
+grandes SÍ pueden aterrizar en una rama física distinta a la que se
+pretendía seguir entre niveles — el chequeo `modal_overlap` ya existente
+es la defensa contra esto (si el salto fue a una rama no relacionada, el
+overlap entre niveles debería ser bajo y seguir marcando el candidato
+como incierto correctamente). Pendiente confirmar en la corrida completa
+si esto se sostiene a escala.
+
+**Nota arquitectónica encontrada de paso, no arreglada aún**: en
+`cycle_6/run_cycle_6.py` (motor base de `cycle_7`/`cycle_8` para
+antiplano), las raíces del escaneo global (`source="determinant_scan"`)
+van directo a `bands.csv` SIN pasar por `refine_matrix_candidate` ni el
+guardián de polos — esa maquinaria solo se aplica a raíces recuperadas
+en ventanas activadas por `gap_detection`/multiplicidad. Es decir, el
+grueso de los puntos finales nunca pasa por la validación de SVD
+equilibrada. Esto podría ser una fuente adicional (no confirmada aún) de
+los puntos espurios que motivaron `cycle_8`. Vale la pena revisarlo
+después de confirmar que el fix de la ventana resuelve el
+sobre-rechazo.
+
 ## Estilo de trabajo con Miguel
 
 - Comunicarse en español.
