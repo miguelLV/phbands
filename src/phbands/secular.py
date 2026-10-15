@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .lattice import SquareLattice
+from .lattice import Lattice
 from .lattice_sums import LatticeSumConfig, S_matrix
 from .scatterer.base import Scatterer
 
@@ -27,7 +27,7 @@ class SecularProblem:
     para un sistema fisico dado (red + dispersor), a un corte modal m_max.
     """
 
-    lattice: SquareLattice
+    lattice: Lattice
     scatterer: Scatterer
     m_max: int
     lattice_sum_config: LatticeSumConfig | None = None

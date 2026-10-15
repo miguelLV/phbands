@@ -1,4 +1,4 @@
-"""Red directa y reciproca para una red cuadrada 2D.
+"""Red directa y reciproca para redes de Bravais 2D (cuadrada y hexagonal).
 
 Convenciones canonicas (ver Modelo_fisico_matematico_canonico_v0_1.docx,
 Sec. 3 y Sec. 14):
@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Iterator, NamedTuple, Sequence
+from typing import Iterator, NamedTuple, Sequence, Union
 
 import numpy as np
 
@@ -94,6 +94,78 @@ class SquareLattice:
         return _cached_reciprocal_xy(self.a, h_max)
 
 
+@lru_cache(maxsize=64)
+def _cached_hexagonal_reciprocal_xy(a: float, h_max: int) -> tuple[np.ndarray, np.ndarray]:
+    # Base reciproca de la red hexagonal (ver HexagonalLattice). El recorte es
+    # CIRCULAR, |G| <= h_max*|b|: una caja en indices (h1,h2) seria un
+    # paralelogramo y romperia la simetria de orden 6 de la suma truncada.
+    b = 4.0 * np.pi / (np.sqrt(3.0) * a)
+    b1 = np.array([2.0 * np.pi / a, -2.0 * np.pi / (np.sqrt(3.0) * a)])
+    b2 = np.array([0.0, b])
+    n = int(np.ceil(2.0 * h_max / np.sqrt(3.0))) + 1
+    h = np.arange(-n, n + 1)
+    h1, h2 = np.meshgrid(h, h, indexing="ij")
+    Gx = (h1 * b1[0] + h2 * b2[0]).ravel()
+    Gy = (h1 * b1[1] + h2 * b2[1]).ravel()
+    keep = np.hypot(Gx, Gy) <= h_max * b * (1.0 + 1e-12)
+    return Gx[keep], Gy[keep]
+
+
+@dataclass(frozen=True)
+class HexagonalLattice:
+    """Red hexagonal (triangular) de constante `a`.
+
+    Convenciones:
+
+        a1 = a*(1, 0),  a2 = a*(1/2, sqrt(3)/2)           (red directa)
+        b1 = (2*pi/a)*(1, -1/sqrt(3)),  b2 = (2*pi/a)*(0, 2/sqrt(3))
+        A_c = sqrt(3)/2 * a**2                             (area celda)
+
+    con a_i . b_j = 2*pi*delta_ij. La distancia al vecino mas cercano es `a`
+    (igual que en la red cuadrada), y el circulo inscrito en la celda de
+    Wigner-Seitz tiene radio a/2: la condicion de no solapamiento r < a/2 y
+    el radio auxiliar de la suma acelerada (rho <= a) no cambian.
+
+    Puntos de alta simetria de la primera zona de Brillouin (hexagono):
+
+        Gamma = (0, 0)
+        M     = (pi/a) * (1, 1/sqrt(3))     punto medio de una arista
+        K     = (pi/a) * (4/3, 0)           vertice
+    """
+
+    a: float
+
+    @property
+    def cell_area(self) -> float:
+        return np.sqrt(3.0) / 2.0 * self.a**2
+
+    def direct_vectors(self, n_max: int) -> list[PolarVector]:
+        """R = n1*a1 + n2*a2 con |R| <= n_max*a, excluyendo el origen
+        (recorte circular por la misma razon que en la reciproca)."""
+        vecs: list[PolarVector] = []
+        n = int(np.ceil(2.0 * n_max / np.sqrt(3.0))) + 1
+        for n1 in range(-n, n + 1):
+            for n2 in range(-n, n + 1):
+                if n1 == 0 and n2 == 0:
+                    continue
+                x = self.a * (n1 + 0.5 * n2)
+                y = self.a * (np.sqrt(3.0) / 2.0 * n2)
+                if np.hypot(x, y) <= n_max * self.a * (1.0 + 1e-12):
+                    vecs.append(PolarVector.from_xy(x, y))
+        return vecs
+
+    def reciprocal_vectors(self, h_max: int) -> list[PolarVector]:
+        Gx, Gy = self.reciprocal_vectors_xy(h_max)
+        return [PolarVector.from_xy(float(x), float(y)) for x, y in zip(Gx, Gy)]
+
+    def reciprocal_vectors_xy(self, h_max: int) -> tuple[np.ndarray, np.ndarray]:
+        """(Gx, Gy) con |G| <= h_max*|b|, INCLUYENDO G = 0; cacheado."""
+        return _cached_hexagonal_reciprocal_xy(self.a, h_max)
+
+
+Lattice = Union[SquareLattice, HexagonalLattice]
+
+
 class HighSymmetryPath:
     """Camino en el espacio reciproco definido por una secuencia de puntos
     etiquetados (fracciones de pi/a), interpolados linealmente con un numero
@@ -160,6 +232,17 @@ def standard_GXM_path(a: float, n_per_segment: int = 60) -> HighSymmetryPath:
         ("Gamma", 0.0, 0.0),
         ("X", 1.0, 0.0),
         ("M", 1.0, 1.0),
+        ("Gamma", 0.0, 0.0),
+    ]
+    return build_path(labeled, a, n_per_segment)
+
+
+def hexagonal_GMKG_path(a: float, n_per_segment: int = 60) -> HighSymmetryPath:
+    """Camino Gamma - M - K - Gamma estandar para red hexagonal."""
+    labeled = [
+        ("Gamma", 0.0, 0.0),
+        ("M", 1.0, 1.0 / np.sqrt(3.0)),
+        ("K", 4.0 / 3.0, 0.0),
         ("Gamma", 0.0, 0.0),
     ]
     return build_path(labeled, a, n_per_segment)

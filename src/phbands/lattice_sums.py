@@ -30,11 +30,11 @@ from dataclasses import dataclass
 import numpy as np
 from scipy.special import hankel1, jv
 
-from .lattice import SquareLattice
+from .lattice import Lattice
 
 
 def direct_sum(l: int, kappa: complex, K: np.ndarray,
-                lattice: SquareLattice, n_shells: int = 40) -> complex:
+                lattice: Lattice, n_shells: int = 40) -> complex:
     """S_l via suma directa (Sec. 10):
 
         S_l(kappa, K) = sum_{R != 0} e^{i K.R} H_l^{(1)}(kappa R) e^{-i l Theta_R}
@@ -53,7 +53,7 @@ def direct_sum(l: int, kappa: complex, K: np.ndarray,
 
 
 def chin_accelerated(l: int, kappa: complex, K: np.ndarray,
-                      lattice: SquareLattice, h_max: int = 30) -> complex:
+                      lattice: Lattice, h_max: int = 30) -> complex:
     """S_l via la representacion acelerada canonica (Sec. 20):
 
         S_l(kappa,K) = 1/J_{|l|+1}(kappa a) *
@@ -147,7 +147,7 @@ class LatticeSumConfig:
     gauge_alternatives_over_a: tuple[float, ...] = ()
 
 
-def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: SquareLattice,
+def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: Lattice,
                          l_values: np.ndarray, orders: np.ndarray,
                          rho: float, h_max: int) -> np.ndarray:
     """S_l para todos los `l_values` de una vez, evaluados con un `rho` dado.
@@ -189,7 +189,7 @@ def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: SquareLattice,
     return prefactor * bracket  # shape (Nl,)
 
 
-def S_matrix(kappa: complex, K: np.ndarray, lattice: SquareLattice,
+def S_matrix(kappa: complex, K: np.ndarray, lattice: Lattice,
              m_max: int, config: LatticeSumConfig | None = None) -> np.ndarray:
     """Ensambla la matriz S_{mn} = S_{m-n}(kappa,K), m,n in [-m_max,m_max],
     usando la representacion acelerada (Sec. 10-11: a = S b).
@@ -242,7 +242,7 @@ def S_matrix(kappa: complex, K: np.ndarray, lattice: SquareLattice,
 
 
 def validate_against_direct_sum(l: int, kappa_complex: complex, K: np.ndarray,
-                                 lattice: SquareLattice,
+                                 lattice: Lattice,
                                  n_shells: int = 60, h_max: int = 40) -> dict:
     """Compara direct_sum vs chin_accelerated para un kappa con Im(kappa) > 0.
     Devuelve un dict con ambos valores y el error relativo -- pensado para

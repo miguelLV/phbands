@@ -19,7 +19,7 @@ import scipy
 from scipy.special import jn_zeros
 
 from phbands.bandstructure import compute_band_structure
-from phbands.lattice import SquareLattice, build_path
+from phbands.lattice import HexagonalLattice, SquareLattice, build_path
 from phbands.lattice_sums import LatticeSumConfig
 from phbands.media import HostMedium
 from phbands.rootfinding import RootFindingConfig
@@ -41,6 +41,8 @@ SYSTEM_LABEL = "Au/Be"
 HOST_LABEL = "Be"
 SCATTERER_KIND = "solid"
 A = 1.0
+# Red de Bravais: "square" (camino M-Gamma-X-M) o "hexagonal" (Gamma-M-K-Gamma).
+LATTICE_KIND = "square"
 FILLING_FRACTION = 0.0908
 RADIUS = float(np.sqrt(FILLING_FRACTION / np.pi))
 
@@ -176,14 +178,26 @@ def merge_windows(raw_windows):
     return merged
 
 
+def make_lattice():
+    if LATTICE_KIND == "square":
+        return SquareLattice(A)
+    if LATTICE_KIND == "hexagonal":
+        return HexagonalLattice(A)
+    raise ValueError(f"LATTICE_KIND desconocido: {LATTICE_KIND!r}")
+
+
+def make_path():
+    if LATTICE_KIND == "hexagonal":
+        labeled = [("Gamma", 0, 0), ("M", 1, 1 / np.sqrt(3)), ("K", 4 / 3, 0), ("Gamma", 0, 0)]
+    else:
+        labeled = [("M", 1, 1), ("Gamma", 0, 0), ("X", 1, 0), ("M", 1, 1)]
+    return build_path(labeled, A, N_PER_SEGMENT)
+
+
 def nearest_reciprocal_pole_bar(k: np.ndarray, omega_bar: float):
-    reciprocal_step = 2 * np.pi / A
-    poles = [
-        float(np.hypot(reciprocal_step * hx + k[0], reciprocal_step * hy + k[1])) / (2 * np.pi)
-        for hx in range(-H_POLE_CHECK, H_POLE_CHECK + 1)
-        for hy in range(-H_POLE_CHECK, H_POLE_CHECK + 1)
-    ]
-    pole = min(poles, key=lambda value: abs(value - omega_bar))
+    Gx, Gy = make_lattice().reciprocal_vectors_xy(H_POLE_CHECK)
+    poles = np.hypot(Gx + k[0], Gy + k[1]) / (2 * np.pi)
+    pole = float(poles[np.argmin(np.abs(poles - omega_bar))])
     return abs(pole - omega_bar), pole
 
 
@@ -470,7 +484,7 @@ def plot_bands(path, bands, recovered, output, diagnostic=False):
 
 def main():
     total_started = time.perf_counter()
-    path = build_path([("M", 1, 1), ("Gamma", 0, 0), ("X", 1, 0), ("M", 1, 1)], A, N_PER_SEGMENT)
+    path = make_path()
     if SCATTERER_KIND == "cavity":
         scatterer = CavityScatterer(RADIUS, HOST)
     elif SCATTERER_KIND in ("cavity_azimuthal", "mooney_rivlin_azimuthal"):
@@ -500,9 +514,9 @@ def main():
             h_max=h_max, gauge_alternatives_over_a=tuple(GAUGE_ALTERNATIVES_OVER_A)
         )
 
-    primary = SecularProblem(SquareLattice(A), scatterer, M_MAX, lattice_config(H_PRIMARY), symmetrized=SYMMETRIZED)
-    check = SecularProblem(SquareLattice(A), scatterer, M_MAX, lattice_config(H_CHECK), symmetrized=SYMMETRIZED)
-    pole_check = SecularProblem(SquareLattice(A), scatterer, M_MAX, lattice_config(H_POLE_CHECK), symmetrized=SYMMETRIZED)
+    primary = SecularProblem(make_lattice(), scatterer, M_MAX, lattice_config(H_PRIMARY), symmetrized=SYMMETRIZED)
+    check = SecularProblem(make_lattice(), scatterer, M_MAX, lattice_config(H_CHECK), symmetrized=SYMMETRIZED)
+    pole_check = SecularProblem(make_lattice(), scatterer, M_MAX, lattice_config(H_POLE_CHECK), symmetrized=SYMMETRIZED)
 
     started = time.perf_counter()
     scan = compute_band_structure(primary, path, 1e-6, OMEGA_BAR_MAX * OMEGA_SCALE, RootFindingConfig(n_scan=N_SCAN), verbose=True)
@@ -547,7 +561,7 @@ def main():
         ),
         "input_band_data_reused": False,
         "interpolation_used_to_create_roots": False,
-        "physics": {"system": SYSTEM_LABEL, "polarization": "antiplane_z", "scatterer_kind": SCATTERER_KIND, "filling_fraction": FILLING_FRACTION, "radius_over_a": RADIUS, "host": {"rho": HOST.rho, "mu": HOST.mu, "c_t": HOST.c_t}, "inclusion": _inclusion_manifest(scatterer), "normalization": "omega*a/(2*pi*c_t_host)"},
+        "physics": {"system": SYSTEM_LABEL, "lattice": LATTICE_KIND, "lattice_constant": A, "polarization": "antiplane_z", "scatterer_kind": SCATTERER_KIND, "filling_fraction": FILLING_FRACTION, "radius_over_a": RADIUS, "host": {"rho": HOST.rho, "mu": HOST.mu, "c_t": HOST.c_t}, "inclusion": _inclusion_manifest(scatterer), "normalization": "omega*a/(2*pi*c_t_host)"},
         "numerics": {"n_scan": N_SCAN, "n_per_segment": N_PER_SEGMENT, "m_max": M_MAX, "h_primary": H_PRIMARY, "h_check": H_CHECK, "pole_check_h": H_POLE_CHECK, "local_grid_size": LOCAL_GRID_SIZE, "continuity_recovery": True, "adaptive_multiplicity": ADAPTIVE_MULTIPLICITY, "multiplicity_local_grid_size": MULTIPLICITY_LOCAL_GRID_SIZE if ADAPTIVE_MULTIPLICITY else None, "multiplicity_ultrafine_grid_size": MULTIPLICITY_ULTRAFINE_GRID_SIZE if ADAPTIVE_MULTIPLICITY else None, "multiplicity_ultrafine_half_width": MULTIPLICITY_ULTRAFINE_HALF_WIDTH if ADAPTIVE_MULTIPLICITY else None, "multiplicity_match_existing_bar": MULTIPLICITY_MATCH_EXISTING_BAR if ADAPTIVE_MULTIPLICITY else None, "multiplicity_resolved_streak": MULTIPLICITY_RESOLVED_STREAK if ADAPTIVE_MULTIPLICITY else None, "symmetrized_secular_matrix": SYMMETRIZED, "bessel_pole_guard": BESSEL_POLE_GUARD, "min_bessel_support": MIN_BESSEL_SUPPORT if BESSEL_POLE_GUARD is not None else None, "gauge_alternatives_over_a": list(GAUGE_ALTERNATIVES_OVER_A)},
         "result": {"raw_scan_candidates": sum(map(len, raw)), "initial_accepted": sum(map(len, accepted)), "initial_rejected": len(rejected), "activation_windows": len(windows), "activated_k_indices": len({window["k_index"] for window in windows}), "local_candidates": len(candidates), "recovered_roots": len(recovered), "final_roots": len(rows), "multiplicity_events": multiplicities, "recovered": recovered},
         "timing_s": {"global_scan": scan_elapsed, "classification_and_activation": activation_elapsed, "local_svd_and_validation": recovery_elapsed, "total": time.perf_counter() - total_started},
