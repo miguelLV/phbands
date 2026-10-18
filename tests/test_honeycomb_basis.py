@@ -81,3 +81,31 @@ def test_two_scatterer_bands_match_plane_wave_expansion():
                                   options={"xatol": 1e-9})
             assert res.fun < 1e-6
             assert abs(res.x - omega_pwe) / omega_pwe < 4e-3
+
+
+def test_three_identical_scatterers_reproduce_folded_triangular_lattice():
+    """Panal + centros de los hexagonos = red triangular de constante d = 1.
+    Con tres cilindros iguales por celda la base debe dar las bandas de la
+    red de un solo cilindro, plegadas (rotada 90 grados respecto de la
+    orientacion de HexagonalLattice(1))."""
+    from phbands.rootfinding import RootFindingConfig, find_roots
+
+    host = HostMedium(mu=1.0, rho=1.0)
+    sc = SolidCylinderScatterer(0.3, host, HostMedium(mu=2.0, rho=1.5))
+    cfg = LatticeSumConfig(h_max=10, gauge_alternatives_over_a=(0.45,))
+    single = SecularProblem(HexagonalLattice(1.0), sc, 3, cfg, symmetrized=True)
+    triple = BasisSecularProblem(LATTICE, (sc, sc, sc), ((0, 0.5), (0, -0.5), (np.sqrt(3) / 2, 0)),
+                                 3, cfg, symmetrized=True)
+    rotate = np.array([[0.0, 1.0], [-1.0, 0.0]])
+    K = np.array([0.9, 0.4])
+    w_max = 0.7 * 2 * np.pi
+    rc = RootFindingConfig(n_scan=500)
+    roots_triple = find_roots(lambda w: triple.det(w, K), 0.1, w_max, rc)
+    roots_single = []
+    for gx, gy in zip(*LATTICE.reciprocal_vectors_xy(2)):
+        k = rotate @ (K + np.array([gx, gy]))
+        roots_single += find_roots(lambda w: single.det(w, k), 0.1, w_max, rc)
+    roots_single = np.unique(np.round(roots_single, 4))
+    assert len(roots_triple) >= 3
+    for w in roots_triple:
+        assert np.min(np.abs(roots_single - w)) < 2e-3
