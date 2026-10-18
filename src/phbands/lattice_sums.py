@@ -149,11 +149,17 @@ class LatticeSumConfig:
 
 def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: Lattice,
                          l_values: np.ndarray, orders: np.ndarray,
-                         rho: float, h_max: int) -> np.ndarray:
+                         rho: float, h_max: int,
+                         offset: np.ndarray | None = None) -> np.ndarray:
     """S_l para todos los `l_values` de una vez, evaluados con un `rho` dado.
 
     `A_c` y los vectores reciprocos siguen viniendo de la red (`a`); `rho`
     aparece unicamente dentro de los argumentos de Bessel/Hankel.
+
+    Con `offset = c` (no nulo y fuera de la red) devuelve la suma CRUZADA
+    entre subredes desplazadas (ver `cross_direct_sum`): misma formula con el
+    factor e^{i Q_h . c} en cada termino y SIN el termino propio de l = 0,
+    porque H_0 ya no es singular en el punto de expansion.
     """
     A_c = lattice.cell_area
 
@@ -170,6 +176,8 @@ def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: Lattice,
         Jvals = jv(orders[:, None], (Qh * rho)[None, :])
         phase = np.exp(-1j * l_values[:, None] * thetah[None, :])  # (Nl,Nh)
         terms = Jvals * phase / denom_pole[None, :]
+        if offset is not None:
+            terms = terms * np.exp(1j * (Qx * offset[0] + Qy * offset[1]))[None, :]
 
     if np.any(near_zero):
         # limite analitico en Qh->0: lim J_1(Qh*rho)/Qh = rho/2 si order==1, si no 0
@@ -183,14 +191,15 @@ def _S_l_values_for_rho(kappa: complex, K: np.ndarray, lattice: Lattice,
     prefactor = 1.0 / jv(orders, kappa * rho)  # shape (Nl,)
     bracket = -4.0 * (1j ** (l_values + 1)) * kappa / A_c * recip_sum
     zero_idx = np.where(l_values == 0)[0]
-    if zero_idx.size:
+    if zero_idx.size and offset is None:
         bracket[zero_idx] += -(hankel1(1, kappa * rho) + 2j / (np.pi * kappa * rho))
 
     return prefactor * bracket  # shape (Nl,)
 
 
 def S_matrix(kappa: complex, K: np.ndarray, lattice: Lattice,
-             m_max: int, config: LatticeSumConfig | None = None) -> np.ndarray:
+             m_max: int, config: LatticeSumConfig | None = None,
+             offset: np.ndarray | None = None) -> np.ndarray:
     """Ensambla la matriz S_{mn} = S_{m-n}(kappa,K), m,n in [-m_max,m_max],
     usando la representacion acelerada (Sec. 10-11: a = S b).
 
@@ -202,17 +211,27 @@ def S_matrix(kappa: complex, K: np.ndarray, lattice: Lattice,
 
     Si `config.gauge_alternatives_over_a` no esta vacio, aplica el parche de
     gauge local descrito en `LatticeSumConfig`.
+
+    `offset = c = d_alpha - d_beta` arma el bloque cruzado S^{alpha beta} de una
+    red con base (p.ej. panal de abejas): a^alpha = S^{alpha beta} b^beta. En ese
+    caso los radios auxiliares se miden en unidades de la distancia de c al
+    punto de red mas cercano (el limite de validez de la expansion), en vez
+    de `a`.
     """
     if config is None:
         config = LatticeSumConfig()
-    a = lattice.a
+    if offset is not None:
+        offset = np.asarray(offset, dtype=float)
+        a = _distance_to_lattice(offset, lattice)
+    else:
+        a = lattice.a
     modes = np.arange(-m_max, m_max + 1)
     n_modes = len(modes)
     l_values = np.arange(-2 * m_max, 2 * m_max + 1)   # shape (Nl,)
     orders = np.abs(l_values) + 1                      # shape (Nl,)
 
     rho = config.rho_over_a * a
-    S_l_values = _S_l_values_for_rho(kappa, K, lattice, l_values, orders, rho, config.h_max)
+    S_l_values = _S_l_values_for_rho(kappa, K, lattice, l_values, orders, rho, config.h_max, offset)
 
     if config.gauge_alternatives_over_a:
         # Condicionamiento actual de cada orden: |J_{|l|+1}(kappa*rho)|.
@@ -226,7 +245,7 @@ def S_matrix(kappa: complex, K: np.ndarray, lattice: Lattice,
             # Se recalculan SOLO los ordenes que mejoran (tipicamente 1 o 2 de
             # 4*m_max+1), no la tabla completa.
             S_alt = _S_l_values_for_rho(
-                kappa, K, lattice, l_values[better], orders[better], rho_alt, config.h_max
+                kappa, K, lattice, l_values[better], orders[better], rho_alt, config.h_max, offset
             )
             S_l_values = S_l_values.copy()
             S_l_values[better] = S_alt
@@ -239,6 +258,35 @@ def S_matrix(kappa: complex, K: np.ndarray, lattice: Lattice,
         for j, n in enumerate(modes):
             S[i, j] = S_l_values[l_to_idx[int(m - n)]]
     return S
+
+
+def _distance_to_lattice(c: np.ndarray, lattice: Lattice) -> float:
+    """min_R |R - c|: distancia de c al punto de red mas cercano."""
+    vecs = lattice.direct_vectors(3)
+    d = min(float(np.hypot(v.x - c[0], v.y - c[1])) for v in vecs)
+    d = min(d, float(np.hypot(c[0], c[1])))
+    if d < 1e-9 * lattice.a:
+        raise ValueError("offset coincide con un punto de la red: use la suma propia")
+    return d
+
+
+def cross_direct_sum(l: int, kappa: complex, K: np.ndarray, lattice: Lattice,
+                     offset: np.ndarray, n_shells: int = 40) -> complex:
+    """Suma cruzada por suma directa (referencia, solo Im(kappa) > 0):
+
+        S_l(c) = sum_R e^{i K.R} H_l^{(1)}(kappa |R - c|) e^{-i l Theta_{R-c}}
+
+    sobre TODOS los R (incluido R = 0), con c = d_alpha - d_beta. Es el
+    coeficiente que lleva la onda saliente del dispersor beta (celda R) a la
+    onda regular en el dispersor alpha de la celda 0.
+    """
+    total = 0.0 + 0.0j
+    vecs = [(0.0, 0.0)] + [(v.x, v.y) for v in lattice.direct_vectors(n_shells)]
+    for x, y in vecs:
+        wx, wy = x - offset[0], y - offset[1]
+        total += (np.exp(1j * (K[0] * x + K[1] * y)) * hankel1(l, kappa * np.hypot(wx, wy))
+                  * np.exp(-1j * l * np.arctan2(wy, wx)))
+    return total
 
 
 def validate_against_direct_sum(l: int, kappa_complex: complex, K: np.ndarray,

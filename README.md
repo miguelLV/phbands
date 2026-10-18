@@ -2,7 +2,9 @@
 
 Solver de estructuras de bandas para cristales fononicos bidimensionales con
 cilindros en una red cuadrada o hexagonal (`--lattice hexagonal` en
-`examples/run_azimuthal_bands.py`, camino Gamma-M-K-Gamma). Incluye polarizaciones in-plane y antiplana,
+`examples/run_azimuthal_bands.py`, camino Gamma-M-K-Gamma), incluido el
+panal tipo grafeno con dos dispersores distintos por celda
+(`--lattice honeycomb --psi ... --psi-b ...`). Incluye polarizaciones in-plane y antiplana,
 busqueda global mediante determinante y recuperacion local mediante SVD.
 
 El directorio `cycles/` conserva las etapas de validacion que reproducen los

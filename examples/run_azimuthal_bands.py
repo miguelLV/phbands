@@ -58,6 +58,18 @@ sqrt(sqrt(3)/2) ~ 0.9306 veces los cuadrados::
     python examples/run_azimuthal_bands.py --name hex --lattice hexagonal \
         --model mooney-rivlin --radius-ratio 0.2792 --r2-over-a 0.3257 --psi 0.5
 
+Panal tipo grafeno (``--lattice honeycomb``)
+--------------------------------------------
+Dos dispersores por celda (subredes A y B) en una red hexagonal, con
+``--psi`` para A y ``--psi-b`` para B. Las longitudes van en unidades de la
+distancia entre vecinos d (constante de red sqrt(3) d), asi que el radio
+externo debe cumplir r2 < 0.5 como en la red cuadrada, y la frecuencia
+normalizada es omega*d/(2*pi*c_t)::
+
+    python examples/run_azimuthal_bands.py --name grafeno --lattice honeycomb \
+        --model mooney-rivlin --radius-ratio 0.30 --r2-over-a 0.35 \
+        --psi 0.2 --psi-b 0.4 --omega-max 1.0
+
 Cada corrida escribe su carpeta en runs/ con figura, CSV y manifiesto.
 """
 
@@ -83,8 +95,11 @@ def parser() -> argparse.ArgumentParser:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument("--name", default="azimutal", help="Nombre del sistema (figuras y manifiesto)")
-    p.add_argument("--lattice", choices=("square", "hexagonal"), default="square",
-                   help="Red de Bravais: square (M-Gamma-X-M) o hexagonal (Gamma-M-K-Gamma)")
+    p.add_argument("--lattice", choices=("square", "hexagonal", "honeycomb"), default="square",
+                   help="square (M-Gamma-X-M), hexagonal (Gamma-M-K-Gamma) o honeycomb "
+                        "(panal tipo grafeno, dos dispersores por celda, Gamma-M-K-Gamma)")
+    p.add_argument("--psi-b", type=float, default=None,
+                   help="[honeycomb] psi del segundo dispersor de la celda; por defecto igual a --psi")
 
     # --- medio anfitrion (caucho, valores de la tesis; incompresible: c_l no interviene) ---
     p.add_argument("--host-rho", type=float, default=0.920, help="Densidad del caucho [g/cm^3]")
@@ -135,7 +150,10 @@ def main() -> None:
         raise ValueError("omega-max, k-per-segment, n-scan y m-max deben ser validos")
 
     # area de celda con a = 1 (el motor usa A = 1.0)
-    cell_area = 1.0 if args.lattice == "square" else float(np.sqrt(3.0) / 2.0)
+    # area de celda por dispersor, en unidades de la distancia entre vecinos
+    # (= a para square/hexagonal; el panal tiene 2 dispersores en sqrt(3)/2*3)
+    cell_area = {"square": 1.0, "hexagonal": float(np.sqrt(3.0) / 2.0),
+                 "honeycomb": float(3.0 * np.sqrt(3.0) / 4.0)}[args.lattice]
     if args.radius_ratio is not None:
         r1 = args.radius_ratio
         filling = float(np.pi * r1**2 / cell_area)
@@ -170,6 +188,11 @@ def main() -> None:
     engine.OUTPUT_TAG = "azimuthal"
     engine.SYSTEM_LABEL = args.name
     engine.LATTICE_KIND = args.lattice
+    if args.lattice == "honeycomb":
+        if args.model != "mooney-rivlin":
+            raise ValueError("--lattice honeycomb requiere --model mooney-rivlin")
+        engine.A = float(np.sqrt(3.0))  # distancia entre vecinos d = 1
+        engine.AZIMUTHAL_PSI_B = args.psi if args.psi_b is None else args.psi_b
     engine.HOST_LABEL = "caucho"
 
     if args.model == "mooney-rivlin":
@@ -215,7 +238,8 @@ def main() -> None:
     print(f"Caucho     : rho={args.host_rho:.6g}, c_t={args.host_ct:.6g} (incompresible; c_l no interviene)")
     print(f"Red        : {args.lattice}")
     print(f"Cavidad    : r1/a={r1:.6g} (llenado {filling:.6g}), anillo hasta r2/a={r2:.6g}")
-    print(f"Deformacion: psi={args.psi:.6g}  ->  D={D:.6g}")
+    print(f"Deformacion: psi={args.psi:.6g}  ->  D={D:.6g}"
+          + (f"   (subred B: psi={engine.AZIMUTHAL_PSI_B:.6g})" if args.lattice == "honeycomb" else ""))
     print(f"Modelo     : {args.model}"
           + (f" (beta={args.beta:.6g}, nucleo={args.core})" if args.model == "mooney-rivlin" else ""))
     print(f"Numerica   : m_max={args.m_max}, n_scan={args.n_scan}, k/tramo={args.k_per_segment}")
