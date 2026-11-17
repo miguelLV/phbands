@@ -20,7 +20,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ..lattice import SquareLattice
+from ..lattice import Lattice
 from ..lattice_sums import LatticeSumConfig, S_matrix
 from .boundary import transfer_matrix_D
 from .media import InPlaneMedium
@@ -28,7 +28,7 @@ from .media import InPlaneMedium
 
 @dataclass
 class InPlaneSecularProblem:
-    lattice: SquareLattice
+    lattice: Lattice
     host: InPlaneMedium
     inclusion: InPlaneMedium
     radius: float

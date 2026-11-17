@@ -48,6 +48,28 @@ T_n en absoluto::
         --model mooney-rivlin --beta 0.5 --psi 0.5 \
         --core solid --inclusion-rho 1.2 --inclusion-ct 0.06
 
+Red hexagonal (``--lattice hexagonal``)
+--------------------------------------
+Red triangular de constante a (vecino mas cercano a), camino Gamma-M-K-Gamma.
+La fraccion de llenado se mide contra el area de celda sqrt(3)/2 a^2, asi que
+para la misma fraccion que una red cuadrada los radios son
+sqrt(sqrt(3)/2) ~ 0.9306 veces los cuadrados::
+
+    python examples/run_azimuthal_bands.py --name hex --lattice hexagonal \
+        --model mooney-rivlin --radius-ratio 0.2792 --r2-over-a 0.3257 --psi 0.5
+
+Panal tipo grafeno (``--lattice honeycomb``)
+--------------------------------------------
+Dos dispersores por celda (subredes A y B) en una red hexagonal, con
+``--psi`` para A y ``--psi-b`` para B. Las longitudes van en unidades de la
+distancia entre vecinos d (constante de red sqrt(3) d), asi que el radio
+externo debe cumplir r2 < 0.5 como en la red cuadrada, y la frecuencia
+normalizada es omega*d/(2*pi*c_t)::
+
+    python examples/run_azimuthal_bands.py --name grafeno --lattice honeycomb \
+        --model mooney-rivlin --radius-ratio 0.30 --r2-over-a 0.35 \
+        --psi 0.2 --psi-b 0.4 --omega-max 1.0
+
 Cada corrida escribe su carpeta en runs/ con figura, CSV y manifiesto.
 """
 
@@ -68,11 +90,16 @@ def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description=(
             "Bandas antiplanas de cavidades con pre-deformacion azimutal en una "
-            "red cuadrada de caucho."
+            "red cuadrada o hexagonal de caucho."
         ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument("--name", default="azimutal", help="Nombre del sistema (figuras y manifiesto)")
+    p.add_argument("--lattice", choices=("square", "hexagonal", "honeycomb"), default="square",
+                   help="square (M-Gamma-X-M), hexagonal (Gamma-M-K-Gamma) o honeycomb "
+                        "(panal tipo grafeno, dos dispersores por celda, Gamma-M-K-Gamma)")
+    p.add_argument("--psi-b", type=float, default=None,
+                   help="[honeycomb] psi del segundo dispersor de la celda; por defecto igual a --psi")
 
     # --- medio anfitrion (caucho, valores de la tesis; incompresible: c_l no interviene) ---
     p.add_argument("--host-rho", type=float, default=0.920, help="Densidad del caucho [g/cm^3]")
@@ -81,7 +108,7 @@ def parser() -> argparse.ArgumentParser:
     # --- geometria ---
     geom = p.add_mutually_exclusive_group()
     geom.add_argument("--filling-fraction", type=float, default=0.126,
-                      help="Fraccion de area pi*(r1/a)^2 de la cavidad")
+                      help="Fraccion de area pi*r1^2/A_c de la cavidad (A_c = a^2 o sqrt(3)/2 a^2)")
     geom.add_argument("--radius-ratio", type=float, help="Radio de la cavidad r1/a")
     p.add_argument("--r2-over-a", type=float, default=0.40,
                    help="Radio externo del anillo pre-deformado, r2/a (debe cumplir r1 < r2 < 0.5)")
@@ -102,7 +129,7 @@ def parser() -> argparse.ArgumentParser:
 
     # --- numerica ---
     p.add_argument("--omega-max", type=float, default=1.3, help="Frecuencia normalizada maxima")
-    p.add_argument("--k-per-segment", type=int, default=40, help="Puntos por tramo de M-Gamma-X-M")
+    p.add_argument("--k-per-segment", type=int, default=40, help="Puntos por tramo del camino de alta simetria")
     p.add_argument("--n-scan", type=int, default=520, help="Muestras del escaneo global en frecuencia")
     p.add_argument("--m-max", type=int, default=2, help="Corte modal cilindrico")
     p.add_argument("--h-primary", type=int, default=8, help="Corte primario de suma de red")
@@ -122,14 +149,20 @@ def main() -> None:
     if args.omega_max <= 0 or args.k_per_segment < 2 or args.n_scan < 20 or args.m_max < 0:
         raise ValueError("omega-max, k-per-segment, n-scan y m-max deben ser validos")
 
+    # area de celda con a = 1 (el motor usa A = 1.0)
+    # area de celda por dispersor, en unidades de la distancia entre vecinos
+    # (= a para square/hexagonal; el panal tiene 2 dispersores en sqrt(3)/2*3)
+    cell_area = {"square": 1.0, "hexagonal": float(np.sqrt(3.0) / 2.0),
+                 "honeycomb": float(3.0 * np.sqrt(3.0) / 4.0)}[args.lattice]
     if args.radius_ratio is not None:
         r1 = args.radius_ratio
-        filling = float(np.pi * r1**2)
+        filling = float(np.pi * r1**2 / cell_area)
     else:
-        if not 0 < args.filling_fraction < np.pi / 4:
-            raise ValueError("filling-fraction debe estar entre 0 y pi/4")
+        max_filling = np.pi * 0.25 / cell_area
+        if not 0 < args.filling_fraction < max_filling:
+            raise ValueError(f"filling-fraction debe estar entre 0 y {max_filling:.4f}")
         filling = args.filling_fraction
-        r1 = float(np.sqrt(filling / np.pi))
+        r1 = float(np.sqrt(filling * cell_area / np.pi))
 
     r2 = args.r2_over_a
     # El anillo pre-deformado es parte del dispersor: el formalismo MST supone
@@ -154,6 +187,12 @@ def main() -> None:
     engine.CYCLE_NUMBER = "azimutal"
     engine.OUTPUT_TAG = "azimuthal"
     engine.SYSTEM_LABEL = args.name
+    engine.LATTICE_KIND = args.lattice
+    if args.lattice == "honeycomb":
+        if args.model != "mooney-rivlin":
+            raise ValueError("--lattice honeycomb requiere --model mooney-rivlin")
+        engine.A = float(np.sqrt(3.0))  # distancia entre vecinos d = 1
+        engine.AZIMUTHAL_PSI_B = args.psi if args.psi_b is None else args.psi_b
     engine.HOST_LABEL = "caucho"
 
     if args.model == "mooney-rivlin":
@@ -197,8 +236,10 @@ def main() -> None:
     D = args.psi * r1**2 / (r2**2 - r1**2)
     print(f"Salida     : {output}")
     print(f"Caucho     : rho={args.host_rho:.6g}, c_t={args.host_ct:.6g} (incompresible; c_l no interviene)")
+    print(f"Red        : {args.lattice}")
     print(f"Cavidad    : r1/a={r1:.6g} (llenado {filling:.6g}), anillo hasta r2/a={r2:.6g}")
-    print(f"Deformacion: psi={args.psi:.6g}  ->  D={D:.6g}")
+    print(f"Deformacion: psi={args.psi:.6g}  ->  D={D:.6g}"
+          + (f"   (subred B: psi={engine.AZIMUTHAL_PSI_B:.6g})" if args.lattice == "honeycomb" else ""))
     print(f"Modelo     : {args.model}"
           + (f" (beta={args.beta:.6g}, nucleo={args.core})" if args.model == "mooney-rivlin" else ""))
     print(f"Numerica   : m_max={args.m_max}, n_scan={args.n_scan}, k/tramo={args.k_per_segment}")

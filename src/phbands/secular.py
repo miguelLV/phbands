@@ -16,7 +16,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .lattice import SquareLattice
+from .lattice import Lattice
 from .lattice_sums import LatticeSumConfig, S_matrix
 from .scatterer.base import Scatterer
 
@@ -27,7 +27,7 @@ class SecularProblem:
     para un sistema fisico dado (red + dispersor), a un corte modal m_max.
     """
 
-    lattice: SquareLattice
+    lattice: Lattice
     scatterer: Scatterer
     m_max: int
     lattice_sum_config: LatticeSumConfig | None = None
@@ -75,6 +75,68 @@ class SecularProblem:
             root_T = np.sqrt(T_diag.astype(complex))
             return I - root_T[:, None] * S * root_T[None, :]
         return I - S @ np.diag(T_diag)
+
+    def det(self, omega: float, K: np.ndarray) -> complex:
+        return np.linalg.det(self.M(omega, K))
+
+
+@dataclass
+class BasisSecularProblem:
+    """Problema secular para una red con BASE: varios dispersores por celda,
+    el dispersor `j` en la posicion `positions[j]` (p.ej. panal de abejas).
+
+    Bloques: a^alpha = sum_beta S^{alpha beta} b^beta, con
+    S^{alpha alpha} la suma propia y S^{alpha beta} la suma cruzada con
+    offset c = d_alpha - d_beta (`lattice_sums.S_matrix(..., offset=c)`), y
+    b^beta = T^beta a^beta. Con un solo dispersor es identico a
+    `SecularProblem`. Todos los dispersores comparten el medio anfitrion.
+    """
+
+    lattice: Lattice
+    scatterers: tuple[Scatterer, ...]
+    positions: tuple[tuple[float, float], ...]
+    m_max: int
+    lattice_sum_config: LatticeSumConfig | None = None
+    symmetrized: bool = False
+
+    def __post_init__(self) -> None:
+        if len(self.scatterers) != len(self.positions):
+            raise ValueError("un dispersor por posicion")
+
+    @property
+    def n_modes(self) -> int:
+        return len(self.scatterers) * (2 * self.m_max + 1)
+
+    def M(self, omega: float, K: np.ndarray) -> np.ndarray:
+        kappa = self.scatterers[0].host_kappa(omega)
+        nb = 2 * self.m_max + 1
+        pos = [np.asarray(p, dtype=float) for p in self.positions]
+        S = np.zeros((self.n_modes, self.n_modes), dtype=complex)
+        self_block = S_matrix(kappa, K, self.lattice, self.m_max, self.lattice_sum_config)
+        for i in range(len(pos)):
+            for j in range(len(pos)):
+                c = pos[i] - pos[j]
+                block = (self_block if i == j else
+                         S_matrix(kappa, K, self.lattice, self.m_max, self.lattice_sum_config, offset=c))
+                S[i * nb:(i + 1) * nb, j * nb:(j + 1) * nb] = block
+        T_diag = self._T_diag(omega)
+        I = np.eye(self.n_modes, dtype=complex)
+        if self.symmetrized:
+            root_T = np.sqrt(T_diag.astype(complex))
+            return I - root_T[:, None] * S * root_T[None, :]
+        return I - S @ np.diag(T_diag)
+
+    def _T_diag(self, omega: float) -> np.ndarray:
+        # T no depende de K y el escaneo global repite la misma malla de omega
+        # en cada punto k: se cachea (las capas pre-deformadas integran una EDO).
+        cache = self.__dict__.setdefault("_T_cache", {})
+        T = cache.get(omega)
+        if T is None:
+            if len(cache) > 20000:
+                cache.clear()
+            T = np.concatenate([sc.T_diag(omega, self.m_max) for sc in self.scatterers])
+            cache[omega] = T
+        return T
 
     def det(self, omega: float, K: np.ndarray) -> complex:
         return np.linalg.det(self.M(omega, K))
